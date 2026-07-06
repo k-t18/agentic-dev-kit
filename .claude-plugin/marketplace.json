@@ -1,0 +1,32 @@
+{
+  "name": "agentic-dev-kit",
+  "owner": {
+    "name": "k-t18"
+  },
+  "description": "Catalog of Claude Code skills, agents, and commands for agentic frontend development.",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "name": "agentic-dev-kit",
+      "source": "./",
+      "description": "One opinionated frontend pipeline for Turborepo + pnpm, Next.js web, bare React Native CLI, Figma MCP, TanStack Query, and a Frappe backend. Bundles 17 skills (web/native components, feature slices, design-system tokens, web-to-native migration, testing, security, and language pros), the design-qa agent, and the init-dev-kit / design-qa / feature-slice commands. Run /agentic-dev-kit:init-dev-kit after enabling to install the CLAUDE.md guardrails into your project. Coupled by design — adopt together, not cherry-picked.",
+      "version": "1.0.0",
+      "author": {
+        "name": "k-t18"
+      },
+      "homepage": "https://github.com/k-t18/agentic-dev-kit",
+      "repository": "https://github.com/k-t18/agentic-dev-kit",
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "frontend",
+        "react",
+        "react-native",
+        "nextjs",
+        "turborepo",
+        "design-system",
+        "figma"
+      ]
+    }
+  ]
+}

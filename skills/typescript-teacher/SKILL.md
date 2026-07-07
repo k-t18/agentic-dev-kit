@@ -1,5 +1,5 @@
 ---
-name: typescript-pro
+name: typescript-teacher
 description: Designs TypeScript types for this monorepo — feature-local vs shared placement, one shared local+remote entity contract, snake_case response/DTO interfaces, discriminated unions for state, type guards, and utility types. Use when modeling types, adding a response/DTO interface, deciding where a type lives, or enforcing type safety across packages.
 license: MIT
 metadata:

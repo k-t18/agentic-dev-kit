@@ -1,5 +1,5 @@
 ---
-name: react-expert
+name: react-renderer
 description: React discipline for this monorepo — effect design (the useEffect checklist), performance (memo/useMemo/useCallback, never index as key, React.lazy), error boundaries, Suspense, and custom (non-data) hooks. Defers component building to web-component, data/hooks/API to feature-slice, and global state to zustand-slice. Use for React patterns, effect/re-render/performance issues, error boundaries, or designing a custom hook.
 license: MIT
 metadata:

@@ -1,5 +1,5 @@
 ---
-name: nextjs-developer
+name: nextjs-nerd
 description: "Use when working in the Next.js App Router shell (apps/web/app/**) — routing, layouts, templates, metadata/SEO, streaming, loading.tsx/error.tsx boundaries, and (web-only) server components + server actions. The shell renders ui-web components and delegates data to @repo/core React Query hooks / the Frappe apiClient — it never builds UI inline or fetches for a component that has a native twin. Triggers on: Next.js, App Router, RSC, Server Components, Server Actions, generateMetadata, loading.tsx, error.tsx, route handlers, streaming SSR, app shell."
 license: MIT
 metadata:
@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: implementation
   output-format: code
-  related-skills: web-component, feature-slice, design-system-setup, react-expert, typescript-pro
+  related-skills: web-component, feature-slice, design-system-setup, react-renderer, typescript-teacher
 ---
 
 # Next.js Developer (the app shell)
@@ -47,7 +47,7 @@ Every project declares its mode at the top of `apps/web/CLAUDE.md`.
 
 **Not for:** UI components (`web-component` / `rn-component`), data hooks / API / stores /
 types (`@repo/core`, see `feature-slice`), design tokens (`design-system-setup`), or React
-effect/perf/error-boundary discipline (`react-expert`).
+effect/perf/error-boundary discipline (`react-renderer`).
 
 ## Core Workflow
 
@@ -186,4 +186,4 @@ Next.js 14+/15, App Router, React Server Components, Server Actions (web-only sh
 Streaming SSR, Partial Prerendering, `next/image`, Metadata API, Route Handlers (thin Frappe
 proxy / revalidation only), Edge Runtime, Turbopack. Data → Frappe `apiClient` + React Query
 (`feature-slice`); UI → `@repo/ui-web`; tokens → `design-system-setup`; React discipline →
-`react-expert`.
+`react-renderer`.

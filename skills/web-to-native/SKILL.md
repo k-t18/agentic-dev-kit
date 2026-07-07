@@ -3,7 +3,7 @@ name: web-to-native
 description: Use when migrating a QA-approved web component from packages/ui-web to its React Native twin in packages/ui-native. Only JSX structure and styling change — the props interface (mirrored verbatim as explicit unions), and every @repo/core import (hooks, API, stores, types, tokens) carry over unchanged; @repo/core is never modified. Maps HTML elements to RN primitives, cva variants to keyed StyleSheet, Tailwind classes to rnTokens, and web events/ARIA to onPress/accessibility*. Invoke to port a component to native, migrate ui-web to ui-native, or create a native twin.
 license: MIT
 metadata:
-  author: Frontend
+  author: https://github.com/k-t18
   version: "1.0.0"
   domain: frontend
   triggers: web-to-native, migrate component, port to React Native, ui-native from ui-web, native twin, migration

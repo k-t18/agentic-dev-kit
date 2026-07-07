@@ -3,7 +3,7 @@ name: rn-component
 description: Use when creating or editing a native UI component in packages/ui-native (bare React Native CLI + StyleSheet). Build with RN primitives (every string inside <Text>), style with StyleSheet.create using rnTokens from @repo/core/tokens/rn-styles, express variants as keyed StyleSheet styles (no cva), and mirror the web twin's props verbatim as explicit unions (minus web-only props like className). Loading uses ActivityIndicator; a11y uses accessibilityRole/Label/State. Invoke for building a ui-native button, input, card, list, or any packages/ui-native component.
 license: MIT
 metadata:
-  author: Frontend
+  author: https://github.com/k-t18
   version: "1.0.0"
   domain: frontend
   triggers: ui-native, native component, React Native, StyleSheet, rnTokens, packages/ui-native, RN component, TouchableOpacity, native button

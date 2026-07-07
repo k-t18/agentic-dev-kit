@@ -3,7 +3,7 @@ name: web-component
 description: Use when creating or editing a web UI component in packages/ui-web (React + Tailwind). Enforces the Figma-first workflow — pull the Figma node, extract design values, map them to @repo/core tokens — then generate the component as a folder (Name.tsx + Name.types.ts + index.ts) using class-variance-authority (cva) for variants, cn() for class merging, lucide-react for icons, a Readonly props type that extends VariantProps, and default/disabled/loading states, re-exported from the ui-web barrel. Invoke for building a ui-web button, input, card, badge, or any packages/ui-web component.
 license: MIT
 metadata:
-  author: Frontend
+  author: https://github.com/k-t18
   version: "2.0.0"
   domain: frontend
   triggers: ui-web, web component, packages/ui-web, Tailwind component, cva, class-variance-authority, Figma component, design-token component, button, input, card, badge, component library

@@ -3,7 +3,7 @@ name: design-system-setup
 description: Use when setting up or maintaining the design-token system for a Turborepo monorepo with a Next.js web app and a bare React Native CLI app. Extracts tokens from Figma via MCP, establishes the tokens/index.ts (master) + tokens/rn-styles.ts (native-derived) dual-output pipeline in packages/core, wires Tailwind on web (as a consumer), configures StyleSheet constants for native, and audits token drift. Invoke for initial design-system setup, Figma token extraction, adding a token category, syncing after Figma updates, or debugging Tailwind/Metro token resolution. tokens/index.ts is always the single source of truth — never tailwind.config.
 license: MIT
 metadata:
-  author: Frontend
+  author: https://github.com/k-t18
   version: "1.0.0"
   domain: frontend
   triggers: design system, design tokens, Figma tokens, tokens.ts, rn-styles.ts, token extraction, token drift, Tailwind tokens, StyleSheet tokens, design system setup

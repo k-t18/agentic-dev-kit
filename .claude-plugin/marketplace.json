@@ -9,7 +9,7 @@
     {
       "name": "agentic-dev-kit",
       "source": "./",
-      "description": "One opinionated frontend pipeline for Turborepo + pnpm, Next.js web, bare React Native CLI, Figma MCP, TanStack Query, and a Frappe backend. Bundles 8 skills (web/native components, feature slices, design-system tokens, web-to-native migration, plus Next.js, React, and TypeScript expertise), the design-qa agent, and the init-dev-kit / design-qa / feature-slice commands. Run /agentic-dev-kit:init-dev-kit after enabling to install the CLAUDE.md guardrails into your project. Coupled by design — adopt together, not cherry-picked.",
+      "description": "One opinionated frontend pipeline for Turborepo + pnpm, Next.js web, bare React Native CLI, Figma MCP, TanStack Query, and a Frappe backend. Bundles 10 skills (web/native components, feature slices, design-system tokens, web-to-native migration, Zustand global-state slices, plus Next.js, React, React Native, and TypeScript expertise), the design-qa agent, and the init-dev-kit / design-qa / feature-slice / zustand-slice commands. Run /agentic-dev-kit:init-dev-kit after enabling to install the CLAUDE.md guardrails into your project. Coupled by design — adopt together, not cherry-picked.",
       "version": "1.0.0",
       "author": {
         "name": "k-t18"

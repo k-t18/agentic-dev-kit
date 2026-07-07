@@ -15,33 +15,29 @@ metadata:
 
 # Zustand Slice (packages/core/state)
 
-Generates a **global client-state store slice** in `@repo/core/state`. Both apps
-(web + native) consume the store unchanged.
+Generates a global client-state store slice in `@repo/core/state` that both apps (web + native) consume unchanged.
 
-Read root `CLAUDE.md` **§3 (golden rule)** and **§5** first — this skill enforces them.
+## Role Definition
 
-## The one rule
+Expert Zustand state engineer for a Turborepo monorepo, scaffolding **flat-file** store slices in `@repo/core/state` where state, actions, and selectors are colocated. Enforces the one rule — **global _client_ state only, and `@repo/core` stays platform-agnostic**: server/API data is React Query in the data layer (`feature-slice`), and `persist` reads its backend through **injected storage** (`getStateStorage()`) so the store never imports `localStorage`, `window`, `react-native`, or `react-native-mmkv`. Reads are always narrow selectors, never the whole store. Read root `CLAUDE.md` **§3 (golden rule)** and **§5** first — this skill enforces them.
 
-> **Global _client_ state only, and `@repo/core` stays platform-agnostic.**
-
-- **Client state, not server state.** Server/API data is React Query in the data layer
-  (`feature-slice`). A store never caches server responses.
-- **Platform-agnostic core.** The store lives in `@repo/core`, so it must **never** import
-  `localStorage`, `window`, `react-native`, or `react-native-mmkv`. `persist` reads its
-  backend through **injected storage** (`getStateStorage()`); each app wires the real
-  adapter at startup. → `references/persist-and-storage.md`
-- **Read with narrow selectors** — subscribe to a slice of the store, never the whole thing.
-  → `references/selectors.md`
-
-## When to Use
+## When to Use This Skill
 
 - Adding a `packages/core/src/state/<name>Store.ts` slice, or a field/action to one.
 
-**Not for:** server/API state (`feature-slice` — React Query), local component state +
-Context (`react-renderer`), design tokens (`design-system-setup`), or durable synced domain
-data (`@repo/offline-kit`).
+**Not for:** server/API state (`feature-slice` — React Query), local component state + Context (`react-renderer`), design tokens (`design-system-setup`), or durable synced domain data (`@repo/offline-kit`).
 
-## What belongs in a store (and what doesn't)
+## Core Workflow
+
+1. **Choose the mode** — scaffold a new `state/<name>Store.ts` (Mode A), or **append** a field + its action (and, if useful, a selector) to an existing store (Mode B, never regenerate the file).
+2. **Define the state shape** — an `interface` holding state + colocated actions; immutable updates in `set`. → `references/store-anatomy.md`
+3. **Wire persistence (if needed)** — `persist` with **injected** `getStateStorage()`; never `localStorage`/`window`/`react-native`/`react-native-mmkv` directly. → `references/persist-and-storage.md`
+4. **Export narrow selector hooks** — subscribe to a slice of the store; `useShallow` for multi-field selects; add the `state/index.ts` barrel export. → `references/selectors.md`
+5. **Validate** — no whole-store subscription, no server data in the store, `tsc --noEmit` clean.
+
+## Technical Guidelines
+
+### What belongs in a store (and what doesn't)
 
 | ✅ Global client state | ❌ Not a store |
 | --- | --- |
@@ -50,19 +46,11 @@ data (`@repo/offline-kit`).
 | Selected entity shared across screens | Durable synced records (→ `@repo/offline-kit`) |
 | Session UI flags (e.g. `isSidebarOpen`) | State used by one component (→ `useState`, `react-renderer`) |
 
-## Modes
+### Store anatomy (flat file)
 
-- **Mode A — scaffold a new store:** create `state/<name>Store.ts` (+ barrel export). →
-  `references/store-anatomy.md`
-- **Mode B — extend a store:** **append** a field + its action (and, if useful, a selector)
-  to an existing `state/<name>Store.ts`. Never regenerate the file.
+`state/<name>Store.ts` holds the state interface, actions, the store, and its selector hooks; `state/index.ts` re-exports them. Persisted stores use `persist` with **injected** storage.
 
-## Store anatomy (flat file)
-
-`state/<name>Store.ts` holds the state interface, actions, the store, and its selector hooks;
-`state/index.ts` re-exports them. Persisted stores use `persist` with **injected** storage.
-
-## Reference Guide
+### Reference Guide
 
 | Topic | Reference | Load when |
 | --- | --- | --- |
@@ -70,7 +58,7 @@ data (`@repo/offline-kit`).
 | Narrow selectors, `useShallow`, selector hooks, re-render pitfalls | `references/selectors.md` | Reading from the store |
 | Cross-platform injected persist storage + Next SSR hydration | `references/persist-and-storage.md` | Persisting a store |
 
-## Canonical pattern
+### Canonical Pattern
 
 ```ts
 // packages/core/src/state/cartStore.ts
@@ -129,17 +117,33 @@ export { configureStateStorage } from './storage';
 > **Non-persisted store?** Drop the `persist(...)` wrapper entirely:
 > `export const useUiStore = create<UiState>()((set) => ({ ... }));`
 
-## Rules
+## Constraints
 
-- ✅ Global **client** state only; server data → `feature-slice`, local/Context → `react-renderer`
-- ✅ `@repo/core` stays platform-agnostic — persist storage is **injected** (`getStateStorage()`);
-  never import `localStorage`/`window`/`react-native`/`react-native-mmkv` in the store
-- ✅ Read via **narrow selectors** (`useCartStore((s) => s.items)`); export named selector hooks;
-  `useShallow` for multi-field selects
-- ✅ Immutable updates in `set`; actions colocated with state
-- ✅ `interface` for the state shape, `type` for unions; **no `any`** (unknown → narrow)
-- ✅ Named exports + `state/index.ts` barrel; store file `state/<name>Store.ts`, hook `use<Name>Store`
-- ✅ Mode B **appends** to an existing store — never regenerate it
-- ❌ No server responses / React Query cache in a store; no auth token vault; no offline records
-- ❌ No whole-store subscription (`useCartStore()` with no selector) — causes needless re-renders
-- ❌ No mutating state in place; no default exports; no `any`
+### MUST DO
+
+- Store **global client state only**; route server data to `feature-slice` and local/Context to `react-renderer`.
+- Keep `@repo/core` platform-agnostic — inject persist storage via `getStateStorage()`; never import `localStorage`/`window`/`react-native`/`react-native-mmkv` in the store.
+- Read via **narrow selectors** (`useCartStore((s) => s.items)`); export named selector hooks; use `useShallow` for multi-field selects.
+- Make updates immutable in `set`; colocate actions with state.
+- Use `interface` for the state shape, `type` for unions; never `any` (unknown → narrow).
+- Use named exports + a `state/index.ts` barrel; store file `state/<name>Store.ts`, hook `use<Name>Store`.
+- In Mode B, **append** to an existing store — never regenerate it.
+
+### MUST NOT DO
+
+- Store server responses / a React Query cache, an auth token vault, or offline records.
+- Subscribe to the whole store (`useCartStore()` with no selector) — it causes needless re-renders.
+- Mutate state in place, use default exports, or use `any`.
+
+## Output Templates
+
+When scaffolding or extending a store, provide:
+
+1. `state/<name>Store.ts` — state interface, colocated actions, immutable `set` updates.
+2. Injected `persist` storage (if persisted) via `getStateStorage()`.
+3. Named narrow selector hooks (`use<Name>Items`, `use<Name>Count`, etc.).
+4. The `state/index.ts` barrel export.
+
+## Knowledge Reference
+
+Zustand, create, persist, createJSONStorage, injected storage, getStateStorage, useShallow, narrow selectors, immutable updates, colocated actions, @repo/core/state, packages/core/state, global client state, platform-agnostic, skipHydration, SSR hydration, selector hooks, barrel exports

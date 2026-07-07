@@ -129,5 +129,5 @@ const onSelect = useCallback(() => selectItem(id), [id]);
 ## Knowledge Reference
 
 React 19 (web) / 18 (native), effects, custom hooks, memoization, Suspense, error
-boundaries, `use()` / `useOptimistic`, React Testing Library (see `test-master`),
+boundaries, `use()` / `useOptimistic`, React Testing Library,
 accessibility (see `web-component`).

@@ -37,7 +37,7 @@ Read root `CLAUDE.md` first; this skill never overrides it. Native is **React 18
 2. **Structure** — the native app is `apps/<native>` consuming `@repo/ui-native` + `@repo/core`
 3. **Implement** — components from `rn-component`, wired with platform handling → _run on iOS simulator and Android emulator; check Metro output for errors before moving on_
 4. **Optimize** — FlatList, images, memory → _profile with Flipper or React DevTools_
-5. **Test** — Both platforms, real devices (`test-master` for the harness)
+5. **Test** — Both platforms, real devices
 
 ### Error Recovery
 - **Metro bundler errors** → reset cache with `npx react-native start --reset-cache`, then restart

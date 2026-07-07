@@ -15,64 +15,43 @@ metadata:
 
 # Web Component (packages/ui-web)
 
-Builds a single web component in `packages/ui-web` from a Figma design, styled
-exclusively with `@repo/core` design tokens. In **`web+native`** projects this is the
-migration surface — components stay client-side so they can mirror to `ui-native`. In
-**`web-only`** projects, `"use client"` is added only when the component is interactive other wise its a server component.
-(Project mode is declared in `apps/web/CLAUDE.md`.)
+Builds a single accessible web UI component in `packages/ui-web` from a Figma design, styled exclusively with `@repo/core` design tokens.
 
-Read root `CLAUDE.md` and `apps/web/CLAUDE.md` first; this skill never overrides them.
-Tokens come from `design-system-setup`; this skill _consumes_ them.
+## Role Definition
 
-## When to Use
+Expert React + Tailwind component engineer specializing in a **Figma-first, token-driven** `packages/ui-web` component library inside a Turborepo monorepo. Builds each component as a self-contained folder using `class-variance-authority` for variants, migration-ready props that mirror a native twin, and full accessibility. In **`web+native`** projects this is the migration surface — components stay client-side so they can mirror to `ui-native`; in **`web-only`** projects, `"use client"` is added only when the component is interactive (project mode is declared in `apps/web/CLAUDE.md`). Read root `CLAUDE.md` and `apps/web/CLAUDE.md` first; this skill never overrides them, and tokens come from `design-system-setup` — this skill _consumes_ them.
+
+## When to Use This Skill
 
 - Building or editing a component in `packages/ui-web`.
 
-**Not for:** route pages/layouts (`apps/web`), hooks/API/stores/types (`@repo/core`,
-see `feature-slice`), native components (`rn-component`), or web→native migration
-(`web-to-native`).
+**Not for:** route pages/layouts (`apps/web`), hooks/API/stores/types (`@repo/core`, see `feature-slice`), native components (`rn-component`), or web→native migration (`web-to-native`).
 
-## Dependencies
-
-The `ui-web` package uses: `class-variance-authority` (variants), `clsx` +
-`tailwind-merge` (the `cn()` helper in `packages/ui-web/src/lib/utils.ts`), and
-`lucide-react` (icons). Assume these exist; don't reinvent `cn()`.
-
-## Core Workflow (Figma-first — mandatory)
+## Core Workflow
 
 **Never guess design values. Always pull from Figma before writing styles.**
 
-1. **Pull the Figma node** via the Figma MCP. Prefer `get_variable_defs` (Figma
-   variables are the token source), plus `get_design_context` / `get_screenshot`.
-   → `references/figma-to-tokens.md`
+1. **Pull the Figma node** via the Figma MCP. Prefer `get_variable_defs` (Figma variables are the token source), plus `get_design_context` / `get_screenshot`. → `references/figma-to-tokens.md`
 2. **Extract** color, spacing, radius, typography, shadow.
-3. **Map each raw value to a token _name_** (`@repo/core/tokens` → Tailwind token
-   class). Never a raw hex/px. No matching token → **stop and flag it** (propose a
-   token addition); do not hardcode. → `references/token-catalog.md`
-4. **Create the component folder** `packages/ui-web/src/components/<Name>/` with three
-   files:
-   - `<Name>.tsx` — the component. **First line: `// figma: <node-url>`** (the node you
-     pulled in step 1 — `design-qa` reads it to re-verify). Then cva variants + `cn()`
-     - lucide icons; named export.
+3. **Map each raw value to a token _name_** (`@repo/core/tokens` → Tailwind token class). Never a raw hex/px. No matching token → **stop and flag it** (propose a token addition); do not hardcode. → `references/token-catalog.md`
+4. **Create the component folder** `packages/ui-web/src/components/<Name>/` with three files:
+   - `<Name>.tsx` — the component. **First line: `// figma: <node-url>`** (the node you pulled in step 1 — `design-qa` reads it to re-verify). Then cva variants + `cn()` + lucide icons; named export.
    - `<Name>.types.ts` — props `interface` extending `VariantProps<typeof <name>Variants>`
    - `index.ts` — re-exports the component, its variants, and its props type
-5. **Define variants with `cva`** (`intent`, `size`, etc.), styled with Tailwind token
-   classes; merge at the call site with `cn()`. No inline styles, no arbitrary `[...]`.
-6. **Handle every applicable state** — by component type (interactive / input / data /
-   async), including error, empty, and the React Query triple. → `references/states.md`.
-   Add full a11y (semantic HTML, focus ring, labels/ARIA, contrast, motion). →
-   `references/accessibility.md`. Use `lucide-react` (`Loader2`) for spinners.
-7. **`"use client"`** first line — always in `web+native`; in `web-only` only if the
-   component is interactive (handlers, hooks, state, browser APIs).
-8. **Barrel export:** add `export * from './components/<Name>';` to
-   `packages/ui-web/src/index.ts`.
-9. **Validate:** `pnpm --filter @repo/ui-web exec tsc --noEmit` is clean; grep for
-   hardcoded hex/px and arbitrary `[...]` — there must be none.
-10. **Verify against Figma:** hand off to the `agentic-dev-kit:design-qa` agent (or run
-    `/agentic-dev-kit:design-qa <Name>`) before opening a PR. It re-pulls the node from the `// figma:`
-    annotation and runs the five design checks; fix any 🔴 blocking issue it flags.
+5. **Define variants with `cva`** (`intent`, `size`, etc.), styled with Tailwind token classes; merge at the call site with `cn()`. No inline styles, no arbitrary `[...]`.
+6. **Handle every applicable state** — by component type (interactive / input / data / async), including error, empty, and the React Query triple. → `references/states.md`. Add full a11y (semantic HTML, focus ring, labels/ARIA, contrast, motion). → `references/accessibility.md`. Use `lucide-react` (`Loader2`) for spinners.
+7. **`"use client"`** first line — always in `web+native`; in `web-only` only if the component is interactive (handlers, hooks, state, browser APIs).
+8. **Barrel export:** add `export * from './components/<Name>';` to `packages/ui-web/src/index.ts`.
+9. **Validate:** `pnpm --filter @repo/ui-web exec tsc --noEmit` is clean; grep for hardcoded hex/px and arbitrary `[...]` — there must be none.
+10. **Verify against Figma:** hand off to the `agentic-dev-kit:design-qa` agent (or run `/agentic-dev-kit:design-qa <Name>`) before opening a PR. It re-pulls the node from the `// figma:` annotation and runs the five design checks; fix any 🔴 blocking issue it flags.
 
-## Reference Guide
+## Technical Guidelines
+
+### Dependencies
+
+The `ui-web` package uses: `class-variance-authority` (variants), `clsx` + `tailwind-merge` (the `cn()` helper in `packages/ui-web/src/lib/utils.ts`), and `lucide-react` (icons). Assume these exist; don't reinvent `cn()`.
+
+### Reference Guide
 
 | Topic                                              | Reference                       | Load when                                  |
 | -------------------------------------------------- | ------------------------------- | ------------------------------------------ |
@@ -82,7 +61,7 @@ The `ui-web` package uses: `class-variance-authority` (variants), `clsx` +
 | Semantic HTML, focus, ARIA, contrast, motion       | `references/accessibility.md`   | Wiring a11y                                |
 | Migration-aware prop naming + type rules           | `references/migration-props.md` | Designing the props interface (web+native) |
 
-## Canonical pattern
+### Canonical Pattern
 
 ```tsx
 // packages/ui-web/src/components/Button/Button.tsx
@@ -195,29 +174,43 @@ export type { ButtonProps } from "./Button.types";
 export * from "./components/Button";
 ```
 
-> Scale classes (`bg-primary-500`) and semantic classes (`bg-surface-canvas`,
-> `border-border-default`) are both token-mapped and valid — see
-> `apps/web/CLAUDE.md`. Interactive states use the scale (`hover:bg-primary-600`).
+> Scale classes (`bg-primary-500`) and semantic classes (`bg-surface-canvas`, `border-border-default`) are both token-mapped and valid — see `apps/web/CLAUDE.md`. Interactive states use the scale (`hover:bg-primary-600`).
 
-## Rules
+## Constraints
 
-- ✅ One folder per component: `Name.tsx` + `Name.types.ts` + `index.ts`
-- ✅ Stamp `// figma: <node-url>` as the first line of `Name.tsx` (design-qa reads it)
-- ✅ Variants via **`cva`**; props type **extends `VariantProps<typeof nameVariants>`**
-- ✅ Named export + `Readonly<Props>` + `Name.displayName`; `export { nameVariants }`
-- ✅ Group imports (external, then internal); `cn` from `'../../lib/utils'`
-- ✅ Icons from `lucide-react` (`Loader2` for loading) — never a glyph char
-- ✅ Tokens only — Tailwind token classes; never raw hex/px, never `[...]`
-- ✅ Migration-ready prop names: `onPress` (not `onClick`), `label` (not `children`),
-  `onChangeText` (not `onChange`); `className` optional. → `references/migration-props.md`
-- ✅ Semantic HTML — the right element for the job (`button`/`a`/`input`); never a
-  `div` for interactive. → `references/accessibility.md`
-- ✅ Handle all applicable states (interactive/input/data/async, incl. error/empty) +
-  full a11y. → `references/states.md`, `references/accessibility.md`
-- ✅ `"use client"` — always in `web+native`; in `web-only` only when interactive
-- ✅ Discriminated unions for multi-state props; shared types from `@repo/core/types`
-- ❌ No inline `style={{}}`, no arbitrary Tailwind values, no default exports, no `React.FC`
-- ❌ No inline `interface` in the `.tsx` — props live in `Name.types.ts`
-- ❌ No `any`, no `as` casts to silence errors
-- ❌ No hooks / API / types / tokens defined here — those belong in `@repo/core`
-- ❌ Never invent a design value — if no token matches, flag it, don't hardcode
+### MUST DO
+
+- Create one folder per component: `Name.tsx` + `Name.types.ts` + `index.ts`.
+- Stamp `// figma: <node-url>` as the first line of `Name.tsx` (design-qa reads it).
+- Define variants with **`cva`**; extend `VariantProps<typeof nameVariants>` in the props type.
+- Use a named export + `Readonly<Props>` + `Name.displayName`; re-export `nameVariants`.
+- Group imports (external, then internal); import `cn` from `'../../lib/utils'`.
+- Use `lucide-react` icons (`Loader2` for loading) — never a glyph character.
+- Use tokens only — Tailwind token classes; never raw hex/px, never arbitrary `[...]`.
+- Name props for migration: `onPress` (not `onClick`), `label` (not `children`), `onChangeText` (not `onChange`); keep `className` optional. → `references/migration-props.md`
+- Use semantic HTML — the right element for the job (`button`/`a`/`input`); never a `div` for interactive elements. → `references/accessibility.md`
+- Handle every applicable state (interactive/input/data/async, incl. error/empty) with full a11y. → `references/states.md`, `references/accessibility.md`
+- Add `"use client"` always in `web+native`; in `web-only` only when interactive.
+- Use discriminated unions for multi-state props; import shared types from `@repo/core/types`.
+
+### MUST NOT DO
+
+- Use inline `style={{}}`, arbitrary Tailwind values, default exports, or `React.FC`.
+- Put an inline `interface` in the `.tsx` — props live in `Name.types.ts`.
+- Use `any` or `as` casts to silence errors.
+- Define hooks / API / types / tokens here — those belong in `@repo/core`.
+- Invent a design value — if no token matches, flag it, don't hardcode.
+
+## Output Templates
+
+When building a `ui-web` component, provide:
+
+1. The component folder — `Name.tsx` (with the `// figma:` first line), `Name.types.ts`, `index.ts`.
+2. `cva` variants mapped to `@repo/core` token classes, merged at the call site with `cn()`.
+3. Every applicable state (loading/error/empty/disabled) plus full a11y wiring.
+4. The barrel export line added to `packages/ui-web/src/index.ts`.
+5. A design-qa handoff note — the `// figma:` node the agent will re-verify.
+
+## Knowledge Reference
+
+React 18/19, Tailwind CSS, class-variance-authority, cva, VariantProps, cn, clsx, tailwind-merge, lucide-react, Loader2, Figma MCP, get_variable_defs, design tokens, @repo/ui-web, @repo/core, packages/ui-web, migration-ready props, onPress, semantic HTML, ARIA, accessibility, discriminated unions, "use client", server components, design-qa

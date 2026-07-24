@@ -7,7 +7,13 @@ The fetch-based rewrite of a typical axios `http-methods` module, plus how the f
 
 Reference implementations of `callGetAPI`/`callPostAPI` use axios; this monorepo bans axios
 (CLAUDE.md §6), so implement them on `fetch`. Resolve the path from the registry, prepend `API_BASE_URL`, attach
-`Authorization: token <token>`, and normalize errors to a consistent shape.
+the `Authorization` header using the **configured auth scheme** (`token` or `Bearer`), and normalize
+errors to a consistent shape.
+
+**Never hardcode the auth scheme.** Different backends expect different `Authorization` prefixes —
+Frappe uses `token <api_key>:<api_secret>`, most Node/JWT backends use `Bearer <jwt>`. The scheme is a
+**setup-time choice** (`NEXT_PUBLIC_API_AUTH_SCHEME`), asked when the project is wired up, not baked
+into the executor. See "Configuration" in `references/engine-seam.md`.
 
 ```ts
 // packages/core/src/api/engine/nodeFetch.ts
@@ -16,8 +22,16 @@ import type { NodeApiKey } from '../nodeEndpoints';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
+/** Auth scheme is chosen at setup — never hardcoded. Default 'token' keeps Frappe behavior. */
+type AuthScheme = 'token' | 'Bearer';
+const AUTH_SCHEME = (process.env.NEXT_PUBLIC_API_AUTH_SCHEME as AuthScheme) ?? 'token';
+
 function authHeaders(token?: string, extra?: Record<string, string>): HeadersInit {
-  return { Accept: 'application/json', ...(token ? { Authorization: `token ${token}` } : {}), ...extra };
+  return {
+    Accept: 'application/json',
+    ...(token ? { Authorization: `${AUTH_SCHEME} ${token}` } : {}),
+    ...extra,
+  };
 }
 
 async function toResult<T>(res: Response): Promise<T> {

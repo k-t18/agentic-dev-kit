@@ -31,13 +31,18 @@ Expert data-layer engineer for a Turborepo monorepo (Next.js web + bare React Na
 
 ## Core Workflow
 
-1. **Confirm the backend is non-Frappe** — a REST path (`/api/get-products`), not a Frappe method (`version/method/entity`). If it's Frappe, stop and use `feature-slice`.
-2. **Register the path** — add a typed entry to the Node SDK registry `api/nodeEndpoints.ts` (`apiName → '/api/...'`). Never inline a URL. → `references/sdk-registry.md`
-3. **Ensure the engine seam exists** — the `runApi` selector + `handlers` registry keyed by `API_ENGINE` (`frappe` | `node`). Create it once; reuse thereafter. This is what makes the layer dynamic. → `references/engine-seam.md`
-4. **Add the Node remote method** — in the feature's `data/remote.ts`, a method that calls the Node engine (fetch executor) with the registry key. Frappe's `data/remote.ts` is separate and unchanged. → `references/remote-and-hooks.md`
-5. **Wire repo + hook** — `repo.ts` decides local-vs-remote **and** engine; `hooks.ts` stays glue (React Query), calling the repo. → `references/remote-and-hooks.md`
-6. **Type it** — feature-local types in `<x>.types.ts`, snake_case mirroring the backend, never `any` (`unknown` → narrow).
-7. **Validate** — no axios, no inline URLs, `getOfflineDb` absent from hooks/repo, Frappe path untouched, engine chosen by config only.
+1. **Setup (once per project)** — ask the user two questions and record the answers as env config, never hardcode them:
+   - **Backend engine** — Frappe or a Node/REST service (e.g. an EMR backend)? → `NEXT_PUBLIC_API_ENGINE` (`frappe` default | `node`).
+   - **Auth scheme** — `Bearer` or `token`? → `NEXT_PUBLIC_API_AUTH_SCHEME` (`token` default | `Bearer`), the `Authorization` prefix the executors emit.
+
+   Defaults (`frappe` + `token`) keep existing behavior if unset. → `references/engine-seam.md`
+2. **Confirm the backend is non-Frappe** — a REST path (`/api/get-products`), not a Frappe method (`version/method/entity`). If it's Frappe, stop and use `feature-slice`.
+3. **Register the path** — add a typed entry to the Node SDK registry `api/nodeEndpoints.ts` (`apiName → '/api/...'`). Never inline a URL. → `references/sdk-registry.md`
+4. **Ensure the engine seam exists** — the `runApi` selector + `handlers` registry keyed by `API_ENGINE` (`frappe` | `node`). Create it once; reuse thereafter. This is what makes the layer dynamic. → `references/engine-seam.md`
+5. **Add the Node remote method** — in the feature's `data/remote.ts`, a method that calls the Node engine (fetch executor) with the registry key. Frappe's `data/remote.ts` is separate and unchanged. → `references/remote-and-hooks.md`
+6. **Wire repo + hook** — `repo.ts` decides local-vs-remote **and** engine; `hooks.ts` stays glue (React Query), calling the repo. → `references/remote-and-hooks.md`
+7. **Type it** — feature-local types in `<x>.types.ts`, snake_case mirroring the backend, never `any` (`unknown` → narrow).
+8. **Validate** — no axios, no inline URLs, no hardcoded auth scheme, `getOfflineDb` absent from hooks/repo, Frappe path untouched, engine + auth scheme chosen by config only.
 
 ## Technical Guidelines
 
@@ -95,7 +100,7 @@ export type NodeApiPath = (typeof nodeEndpoints)[NodeApiKey];
 
 ### Fetch executors (not axios)
 
-The Node counterpart of a typical axios http-methods module, rewritten on `fetch`: resolve the path from the registry, prepend `API_BASE_URL`, attach `Authorization: token <token>`, `encodeURIComponent` query values, normalize errors. Full code → `references/remote-and-hooks.md`.
+The Node counterpart of a typical axios http-methods module, rewritten on `fetch`: resolve the path from the registry, prepend `API_BASE_URL`, attach `Authorization` using the **configured scheme** (`NEXT_PUBLIC_API_AUTH_SCHEME` — `token` or `Bearer`, never hardcoded), `encodeURIComponent` query values, normalize errors. Full code → `references/remote-and-hooks.md`.
 
 ### Layering stays intact
 
@@ -125,11 +130,13 @@ hooks.ts → repo.ts → data/remote.ts → runApi(engine seam) → nodeHandler 
 - Use **`fetch`** for the Node transport; `encodeURIComponent` / `URLSearchParams` for query values.
 - Keep the layering: `hooks → repo → data/remote → runApi`; hooks are glue only.
 - Feature-local types in `<x>.types.ts`, snake_case, optional `?`, never `any` (`unknown` → narrow).
-- Default `API_ENGINE` to `frappe` so an unset env never regresses existing behavior.
+- Ask the **backend engine** and **auth scheme** at setup; drive the `Authorization` prefix from `NEXT_PUBLIC_API_AUTH_SCHEME` (`token` | `Bearer`) — never hardcode it in an executor.
+- Default `API_ENGINE` to `frappe` and `API_AUTH_SCHEME` to `token` so an unset env never regresses existing behavior.
 
 ### MUST NOT DO
 
 - Add or use **axios** (CLAUDE.md §6) — the reference pattern uses axios; you rewrite it on `fetch`.
+- Hardcode the `Authorization` scheme (`token`/`Bearer`) in a fetch executor — read it from `NEXT_PUBLIC_API_AUTH_SCHEME`.
 - Overwrite or fold the Frappe path into the Node engine, or edit `@8848digital/catalyst`.
 - Import `react-native` / `react-dom` or DOM-only globals in the `@app/core` engine (keep it platform-agnostic; `fetch` + `process.env` only).
 - Import `getOfflineDb` / run SQL or HTTP inside a hook or repo (DB layer / `data/**` only).
@@ -147,4 +154,4 @@ When integrating a Node.js endpoint, provide:
 
 ## Knowledge Reference
 
-Node.js REST API, engine seam, engine runner, handlers registry, API_ENGINE, nodeEndpoints, SDK path registry, apiName to path, fetch executor, no axios, Authorization token, @app/core, feature slice layering, hooks-repo-remote, repo local vs remote, Frappe vs Node coexistence, buildEndpoint, catalyst api client, platform-agnostic core, snake_case types, encodeURIComponent, URLSearchParams
+Node.js REST API, engine seam, engine runner, handlers registry, API_ENGINE, API_AUTH_SCHEME, Bearer vs token, auth scheme, setup questions, nodeEndpoints, SDK path registry, apiName to path, fetch executor, no axios, Authorization header, @app/core, feature slice layering, hooks-repo-remote, repo local vs remote, Frappe vs Node coexistence, buildEndpoint, catalyst api client, platform-agnostic core, snake_case types, encodeURIComponent, URLSearchParams

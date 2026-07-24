@@ -82,10 +82,18 @@ the seam entirely. The seam is required only where a slice must be **switchable*
 
 ## Configuration
 
-- `NEXT_PUBLIC_API_ENGINE` (web, via Next) / `API_ENGINE` (native, via `react-native-config`) —
-  values `frappe` (default) or `node`. Document it in `docs/environment.md` alongside
-  `API_BASE_URL`.
-- **Default to `frappe`.** An unset engine must never change existing behavior.
+Two settings are chosen **once, at project setup** — ask the user and record both in `.env` /
+`docs/environment.md` alongside `API_BASE_URL`:
+
+- **Backend engine** — `NEXT_PUBLIC_API_ENGINE` (web, via Next) / `API_ENGINE` (native, via
+  `react-native-config`) — values `frappe` (default) or `node`. Ask: *"Frappe or a Node/REST
+  service (e.g. an EMR backend)?"*
+- **Auth scheme** — `NEXT_PUBLIC_API_AUTH_SCHEME` (web) / `API_AUTH_SCHEME` (native) — values
+  `token` (default) or `Bearer`. This is the `Authorization` prefix the fetch executors emit
+  (`token <token>` for Frappe-style keys, `Bearer <jwt>` for JWT services). Ask: *"Bearer or
+  token auth?"* — **never** hardcode it in the executor (see `references/remote-and-hooks.md`).
+
+- **Default to `frappe` + `token`.** An unset engine or scheme must never change existing behavior.
 - Engine can be global (one env for the app) or, if you need per-feature routing, pass an explicit
   engine argument down from the repo — but keep the default-frappe fallback.
 

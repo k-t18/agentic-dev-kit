@@ -31,14 +31,14 @@ Expert data-layer engineer for a Turborepo monorepo (Next.js web + bare React Na
 
 ## Core Workflow
 
-1. **Setup (once per project)** — ask the user two questions and record the answers as env config, never hardcode them:
-   - **Backend engine** — Frappe or a Node/REST service (e.g. an EMR backend)? → `NEXT_PUBLIC_API_ENGINE` (`frappe` default | `node`).
-   - **Auth scheme** — `Bearer` or `token`? → `NEXT_PUBLIC_API_AUTH_SCHEME` (`token` default | `Bearer`), the `Authorization` prefix the executors emit.
+1. **Setup (once per project)** — ask the user two questions and record the answers as **per-app** env config (never hardcode, never read `process.env` inside `@repo/core` itself — see below):
+   - **Backend engine** — Frappe or a Node/REST service (e.g. an EMR backend)? → `NEXT_PUBLIC_API_ENGINE` on web (Next, read in `providers.tsx`) / `API_ENGINE` on native (`react-native-config`, read in `bootstrap.ts`) — both `frappe` default | `node`.
+   - **Auth scheme** — `Bearer` or `token`? → `NEXT_PUBLIC_API_AUTH_SCHEME` (web) / `API_AUTH_SCHEME` (native), the `Authorization` prefix the executors emit — `token` default | `Bearer`.
 
-   Defaults (`frappe` + `token`) keep existing behavior if unset. → `references/engine-seam.md`
+   Each app feeds its own value into the seam once at boot via `setApiEngine`/`setNodeBaseUrl`/`setNodeAuthScheme` (never a direct env read inside the seam — the two env mechanisms aren't interchangeable). Defaults (`frappe` + `token`) keep existing behavior if the setters are never called. → `references/engine-seam.md`
 2. **Confirm the backend is non-Frappe** — a REST path (`/api/get-products`), not a Frappe method (`version/method/entity`). If it's Frappe, stop and use `feature-slice`.
 3. **Register the path** — add a typed entry to the Node SDK registry `api/nodeEndpoints.ts` (`apiName → '/api/...'`). Never inline a URL. → `references/sdk-registry.md`
-4. **Ensure the engine seam exists** — the `runApi` selector + `handlers` registry keyed by `API_ENGINE` (`frappe` | `node`). Create it once; reuse thereafter. This is what makes the layer dynamic. → `references/engine-seam.md`
+4. **Ensure the engine seam exists** — the `runApi` selector + `handlers` registry keyed by the app-set engine config (`frappe` | `node`). Create it once (with `engineConfig.ts`); reuse thereafter. This is what makes the layer dynamic. → `references/engine-seam.md`
 5. **Add the Node remote method** — in the feature's `data/remote.ts`, a method that calls the Node engine (fetch executor) with the registry key. Frappe's `data/remote.ts` is separate and unchanged. → `references/remote-and-hooks.md`
 6. **Wire repo + hook** — `repo.ts` decides local-vs-remote **and** engine; `hooks.ts` stays glue (React Query), calling the repo. → `references/remote-and-hooks.md`
 7. **Type it** — feature-local types in `<x>.types.ts`, snake_case mirroring the backend, never `any` (`unknown` → narrow).
@@ -66,6 +66,7 @@ Mirror the common engine-runner pattern (a `handlers` map keyed by an engine-nam
 // packages/core/src/api/engine/runApi.ts
 import { nodeHandler } from './nodeHandler';
 import { frappeHandler } from './frappeHandler'; // wraps the existing catalyst api
+import { getApiEngine } from './engineConfig'; // app-set config, not process.env
 
 type Engine = 'frappe' | 'node';
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -73,16 +74,22 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 const handlers: Record<Engine, ApiHandler> = { frappe: frappeHandler, node: nodeHandler };
 
 export function runApi<T>(method: HttpMethod, apiName: string, data?: unknown, token?: string): Promise<T> {
-  const engine = (process.env.NEXT_PUBLIC_API_ENGINE as Engine) ?? 'frappe';
+  const engine = getApiEngine();
   const handler = handlers[engine];
   if (!handler) throw new Error(`Unsupported API engine: ${engine}`);
   return handler<T>(method, apiName, data, token);
 }
 ```
 
-- Default stays `frappe` so nothing regresses if `API_ENGINE` is unset.
+- Default stays `frappe` so nothing regresses if the engine config is never set.
 - `nodeHandler` dispatches by verb to the fetch executors and resolves the path from `nodeEndpoints.ts`.
-- **Platform-agnostic:** the seam lives in `@repo/core` and uses only `fetch` + `process.env` — no `react-native`, no `react-dom`, no axios (CLAUDE.md §3/§6).
+- **Platform-agnostic:** the seam lives in `@repo/core` and uses only `fetch` + a small app-set
+  config module (`engineConfig.ts`, setters/getters) — never `process.env` directly inside the seam,
+  no `react-native`, no `react-dom`, no axios (CLAUDE.md §3/§6). `process.env.NEXT_PUBLIC_*` is a
+  Next-only build-time mechanism; it doesn't exist in the React Native bundle, so each app reads its
+  own env source (Next `process.env.NEXT_PUBLIC_*` / native `react-native-config`'s `Config.*`) and
+  feeds it into the seam via `setApiEngine`/`setNodeBaseUrl`/`setNodeAuthScheme` at boot — see
+  `references/engine-seam.md`.
 
 ### Node SDK path registry
 
@@ -100,7 +107,7 @@ export type NodeApiPath = (typeof nodeEndpoints)[NodeApiKey];
 
 ### Fetch executors (not axios)
 
-The Node counterpart of a typical axios http-methods module, rewritten on `fetch`: resolve the path from the registry, prepend `API_BASE_URL`, attach `Authorization` using the **configured scheme** (`NEXT_PUBLIC_API_AUTH_SCHEME` — `token` or `Bearer`, never hardcoded), `encodeURIComponent` query values, normalize errors. Full code → `references/remote-and-hooks.md`.
+The Node counterpart of a typical axios http-methods module, rewritten on `fetch`: resolve the path from the registry, prepend the app-set base URL (`getNodeBaseUrl()`), attach `Authorization` using the **configured scheme** (`getNodeAuthScheme()` — `token` or `Bearer`, never hardcoded, never read from `process.env` in this file), `encodeURIComponent` query values, normalize errors. Full code → `references/remote-and-hooks.md`.
 
 ### Layering stays intact
 
@@ -130,15 +137,17 @@ hooks.ts → repo.ts → data/remote.ts → runApi(engine seam) → nodeHandler 
 - Use **`fetch`** for the Node transport; `encodeURIComponent` / `URLSearchParams` for query values.
 - Keep the layering: `hooks → repo → data/remote → runApi`; hooks are glue only.
 - Feature-local types in `<x>.types.ts`, snake_case, optional `?`, never `any` (`unknown` → narrow).
-- Ask the **backend engine** and **auth scheme** at setup; drive the `Authorization` prefix from `NEXT_PUBLIC_API_AUTH_SCHEME` (`token` | `Bearer`) — never hardcode it in an executor.
-- Default `API_ENGINE` to `frappe` and `API_AUTH_SCHEME` to `token` so an unset env never regresses existing behavior.
+- Ask the **backend engine** and **auth scheme** at setup; drive the `Authorization` prefix from the seam's app-set config (`getNodeAuthScheme()`, `token` | `Bearer`) — never hardcode it in an executor.
+- Default the engine config to `frappe` + `token` so an app that never calls the setters keeps existing behavior.
+- Each app calls `setApiEngine`/`setNodeBaseUrl`/`setNodeAuthScheme` **once, at boot** (web: `providers.tsx` from `process.env.NEXT_PUBLIC_*`; native: `bootstrap.ts` from `react-native-config`'s `Config.*`).
 
 ### MUST NOT DO
 
 - Add or use **axios** (CLAUDE.md §6) — the reference pattern uses axios; you rewrite it on `fetch`.
-- Hardcode the `Authorization` scheme (`token`/`Bearer`) in a fetch executor — read it from `NEXT_PUBLIC_API_AUTH_SCHEME`.
+- Hardcode the `Authorization` scheme (`token`/`Bearer`) in a fetch executor — read it from `getNodeAuthScheme()`.
 - Overwrite or fold the Frappe path into the Node engine, or edit `@8848digital/catalyst`.
-- Import `react-native` / `react-dom` or DOM-only globals in the `@repo/core` engine (keep it platform-agnostic; `fetch` + `process.env` only).
+- Import `react-native` / `react-dom` or DOM-only globals in the `@repo/core` engine (keep it platform-agnostic; `fetch` + the app-set `engineConfig.ts` only).
+- Read `process.env.NEXT_PUBLIC_*` (or any env var) directly inside `api/engine/**` — that's a Next-only mechanism that silently breaks on native; env is read only in each app's boot file and passed in via the setters.
 - Import `getOfflineDb` / run SQL or HTTP inside a hook or repo (DB layer / `data/**` only).
 - Use `any`, default exports, or put API code in `apps/*`.
 

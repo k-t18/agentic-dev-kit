@@ -10,26 +10,26 @@ Reference implementations of `callGetAPI`/`callPostAPI` use axios; this monorepo
 the `Authorization` header using the **configured auth scheme** (`token` or `Bearer`), and normalize
 errors to a consistent shape.
 
-**Never hardcode the auth scheme.** Different backends expect different `Authorization` prefixes —
-Frappe uses `token <api_key>:<api_secret>`, most Node/JWT backends use `Bearer <jwt>`. The scheme is a
-**setup-time choice** (`NEXT_PUBLIC_API_AUTH_SCHEME`), asked when the project is wired up, not baked
-into the executor. See "Configuration" in `references/engine-seam.md`.
+**Never hardcode the auth scheme, and never read `process.env` in this file.** Different backends
+expect different `Authorization` prefixes — Frappe uses `token <api_key>:<api_secret>`, most
+Node/JWT backends use `Bearer <jwt>`. The scheme is a **setup-time choice**
+(`NEXT_PUBLIC_API_AUTH_SCHEME` on web / `API_AUTH_SCHEME` on native), asked when the project is
+wired up — but the executor reads it (and the base URL) from the seam's app-set config
+(`getNodeBaseUrl()`/`getNodeAuthScheme()`), never from `process.env` directly. `process.env.NEXT_PUBLIC_*`
+is a Next-only build-time mechanism that doesn't exist in the React Native bundle — reading it here
+would silently break native (empty base URL, wrong scheme) instead of erroring. See "Configuration"
+in `references/engine-seam.md`.
 
 ```ts
 // packages/core/src/api/engine/nodeFetch.ts
 import { resolveNodePath } from './resolvePath';
 import type { NodeApiKey } from '../nodeEndpoints';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-
-/** Auth scheme is chosen at setup — never hardcoded. Default 'token' keeps Frappe behavior. */
-type AuthScheme = 'token' | 'Bearer';
-const AUTH_SCHEME = (process.env.NEXT_PUBLIC_API_AUTH_SCHEME as AuthScheme) ?? 'token';
+import { getNodeBaseUrl, getNodeAuthScheme } from './engineConfig';
 
 function authHeaders(token?: string, extra?: Record<string, string>): HeadersInit {
   return {
     Accept: 'application/json',
-    ...(token ? { Authorization: `${AUTH_SCHEME} ${token}` } : {}),
+    ...(token ? { Authorization: `${getNodeAuthScheme()} ${token}` } : {}),
     ...extra,
   };
 }
@@ -49,13 +49,13 @@ async function toResult<T>(res: Response): Promise<T> {
 export async function nodeGet<T>(apiName: NodeApiKey, data?: unknown, token?: string): Promise<T> {
   const path = resolveNodePath(apiName);
   const params = data && typeof data === 'object' ? new URLSearchParams(data as Record<string, string>).toString() : '';
-  const url = params ? `${BASE_URL}${path}?${params}` : `${BASE_URL}${path}`;
+  const url = params ? `${getNodeBaseUrl()}${path}?${params}` : `${getNodeBaseUrl()}${path}`;
   const res = await fetch(url, { method: 'GET', headers: authHeaders(token) });
   return toResult<T>(res);
 }
 
 export async function nodePost<T>(apiName: NodeApiKey, data?: unknown, token?: string): Promise<T> {
-  const url = `${BASE_URL}${resolveNodePath(apiName)}`;
+  const url = `${getNodeBaseUrl()}${resolveNodePath(apiName)}`;
   // FormData must NOT get a JSON content-type — let fetch set the multipart boundary.
   const isForm = typeof FormData !== 'undefined' && data instanceof FormData;
   const res = await fetch(url, {
@@ -67,7 +67,7 @@ export async function nodePost<T>(apiName: NodeApiKey, data?: unknown, token?: s
 }
 
 export async function nodePut<T>(apiName: NodeApiKey, data?: unknown, token?: string): Promise<T> {
-  const url = `${BASE_URL}${resolveNodePath(apiName)}`;
+  const url = `${getNodeBaseUrl()}${resolveNodePath(apiName)}`;
   const res = await fetch(url, {
     method: 'PUT',
     headers: authHeaders(token, { 'Content-Type': 'application/json' }),
@@ -77,7 +77,7 @@ export async function nodePut<T>(apiName: NodeApiKey, data?: unknown, token?: st
 }
 
 export async function nodeDelete<T>(apiName: NodeApiKey, data?: unknown, token?: string): Promise<T> {
-  const url = `${BASE_URL}${resolveNodePath(apiName)}`;
+  const url = `${getNodeBaseUrl()}${resolveNodePath(apiName)}`;
   const res = await fetch(url, {
     method: 'DELETE',
     headers: authHeaders(token, { 'Content-Type': 'application/json' }),

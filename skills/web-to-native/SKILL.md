@@ -216,6 +216,8 @@ purely additive.
 | Reusing `@repo/core` logic (duplicate vs. subpath export) | `references/reusing-core-logic.md` | Shape 1 — a component with real logic behind it |
 | Web page shape · native screen mirror · portability tests | `references/page-composition.md` | Shape 2 — wiring a screen's container hook |
 | Style property mapping · primitives · a11y | the **`rn-component`** skill | The native target conventions |
+| iOS build bring-up · CocoaPods · Info.plist parity · signing | `references/ios-build-readiness.md` | The migrated native app needs iOS parity with the working Android build |
+| Tablet / large-screen adaptation · reactivity audit · orientation policy | `references/mobile-to-tablet.md` | A migrated component or screen needs to work on tablets, split-view, or multi-window |
 
 ## Migration checklist
 

@@ -7,8 +7,7 @@ outbox later pushes it to the server. `getOfflineDb` is legal here (not in hooks
 
 ```ts
 import { getOfflineDb, insertRow } from '@8848digital/offline-kit';
-import { generateUuid } from '../../utils/uuid';
-import { invalidateLocalDataAfterWrite } from '../../lib/invalidateLocalData';
+import { generateUuid, invalidateLocalDataAfterWrite } from '@8848digital/catalyst';
 import type { CreateOrderLocalInput } from './order.types';
 
 export interface CreateOrderResult { orderId: string; }

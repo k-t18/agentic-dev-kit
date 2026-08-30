@@ -41,7 +41,7 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
 - No `any` — use `unknown` and narrow.
 - No `as SomeType` casts to silence errors — fix the type.
 - Discriminated unions for mutually-exclusive multi-state props.
-- Shared domain types imported from `@repo/core/types` — never redefined locally.
+- Shared domain types imported from `@app/core/types` — never redefined locally.
 
 ```ts
 // ✅ discriminated union — states are explicit

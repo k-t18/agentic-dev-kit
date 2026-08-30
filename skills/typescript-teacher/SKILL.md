@@ -106,7 +106,7 @@ Keep `strict: true` and all strict flags on.
 ### MUST NOT DO
 - Use `any` — use `unknown` and narrow (unknown id → `string`)
 - Dump a feature's types into the global `types/` file — keep them feature-local
-- Redefine a shared type in an app package — import from `@repo/core`
+- Redefine a shared type in an app package — import from `@app/core`
 - Disable strict null checks; mix type-only and value imports
 - Use `as` to silence errors (only where genuinely necessary)
 - Use enums (prefer `as const` objects)

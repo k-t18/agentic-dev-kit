@@ -17,8 +17,8 @@ Confirm these exist (create stubs if missing):
 ## 1.2 Check the Tailwind relationship
 
 Open `/apps/web/tailwind.config.ts`. Determine if it:
-- ✅ Imports from `@repo/core/tokens` (correct — consumer)
-- ❌ Defines token values inline (incorrect — tokens belong in `@repo/core`)
+- ✅ Imports from `@app/core/tokens` (correct — consumer)
+- ❌ Defines token values inline (incorrect — tokens belong in `@app/core`)
 
 Also confirm `content` globs cover the app and the web UI package, e.g.:
 ```ts
@@ -29,7 +29,7 @@ If inverted (defines values), flag for remediation in Phase 6.
 ## 1.3 Check Metro config
 
 Open `/apps/native/metro.config.js`. Confirm `watchFolders` includes the monorepo
-root; if missing, native will fail to resolve `@repo/core` imports.
+root; if missing, native will fail to resolve `@app/core` imports.
 
 ```js
 // Required in metro.config.js

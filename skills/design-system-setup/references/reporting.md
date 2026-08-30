@@ -97,7 +97,7 @@ Before finalizing, verify (report failures explicitly — never silently pass):
 - Action: replace with token imports (manual or next PR)
 
 ### Tailwind Relationship
-- Status: correctly imports from @repo/core/tokens / fixed / still incorrect
+- Status: correctly imports from @app/core/tokens / fixed / still incorrect
 
 ### Metro Config
 - Status: watchFolders correct / fixed / still missing
@@ -111,7 +111,7 @@ Before finalizing, verify (report failures explicitly — never silently pass):
 ### Next Steps
 - [ ] Verify font PostScript names match fontFamily values in rn-styles.ts
 - [ ] Run pnpm dev from root — confirm web resolves tokens
-- [ ] Run npx react-native run-ios — confirm native resolves @repo/core/tokens
+- [ ] Run npx react-native run-ios — confirm native resolves @app/core/tokens
 - [ ] QA: spot-check 3 web components (Tailwind token classes) + 3 native (rnTokens)
 - [ ] Commit and open PR to develop branch
 ```

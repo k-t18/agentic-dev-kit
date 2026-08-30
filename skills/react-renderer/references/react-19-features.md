@@ -7,7 +7,7 @@
 
 ## use() Hook
 
-> **Not for data fetching in this monorepo.** All server data goes through `@repo/core`
+> **Not for data fetching in this monorepo.** All server data goes through `@app/core`
 > React Query hooks (`feature-slice`) — they own caching, retries, and the isError/isLoading
 > states. Calling `fetchComments(postId)` in render (below) creates a new promise every
 > render and has no cache; it's shown only to illustrate the API. Reserve `use()` for
@@ -129,7 +129,7 @@ function ContactForm() {
 
 > **Prefer the data layer's optimistic path.** In this monorepo optimistic UI is normally
 > a React Query mutation with `onMutate`/rollback, and offline writes reconcile through
-> `@repo/offline-kit`'s **outbox** — both owned by `feature-slice`. That path is shared,
+> `@8848digital/offline-kit`'s **outbox** — both owned by `feature-slice`. That path is shared,
 > migratable, and survives offline. Reach for `useOptimistic` only for ephemeral,
 > view-local optimism that never needs to persist or sync. The example below uses a server
 > action purely to show the primitive — in `ui-web` the persist call is a `useApiMutation`,

@@ -6,7 +6,7 @@ outbox later pushes it to the server. `getOfflineDb` is legal here (not in hooks
 ## `usecases.ts` — the local write
 
 ```ts
-import { getOfflineDb, insertRow } from '@repo/offline-kit';
+import { getOfflineDb, insertRow } from '@8848digital/offline-kit';
 import { generateUuid } from '../../utils/uuid';
 import { invalidateLocalDataAfterWrite } from '../../lib/invalidateLocalData';
 import type { CreateOrderLocalInput } from './order.types';
@@ -43,7 +43,7 @@ Rules: one `db.transaction` (all-or-nothing); default `sync_status:'pending'`,
 ## `outbox.ts` — pending queue + payload + adapter
 
 ```ts
-import { getOfflineDb, type CreateRecordLogPayload, type OutboxAdapter } from '@repo/offline-kit';
+import { getOfflineDb, type CreateRecordLogPayload, type OutboxAdapter } from '@8848digital/offline-kit';
 import type { PendingOrder, OrderRow, OrderItemRow } from './order.types';
 
 // oldest-first work queue

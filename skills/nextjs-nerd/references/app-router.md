@@ -42,7 +42,7 @@ app/
 ```tsx
 // app/layout.tsx
 import type { Metadata } from 'next'
-import { fontClassName } from '@repo/core/tokens' // web font wired by design-system-setup
+import { fontClassName } from '@app/core/tokens' // web font wired by design-system-setup
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -77,8 +77,8 @@ export default function RootLayout({
 ```tsx
 // app/dashboard/layout.tsx
 import { redirect } from 'next/navigation'
-import { getServerSession } from '@repo/core/auth' // Frappe session, not NextAuth
-import { Sidebar } from '@repo/ui-web'
+import { getServerSession } from '@app/core/auth' // Frappe session, not NextAuth
+import { Sidebar } from '@app/ui-web'
 
 export default async function DashboardLayout({
   children,
@@ -100,8 +100,8 @@ export default async function DashboardLayout({
 }
 ```
 
-> Auth is a Frappe session read through `@repo/core`, not NextAuth. Import UI (`Sidebar`)
-> from `@repo/ui-web` — never a local `@/components` path.
+> Auth is a Frappe session read through `@app/core`, not NextAuth. Import UI (`Sidebar`)
+> from `@app/ui-web` — never a local `@/components` path.
 
 ## Templates (Re-mount on Navigation)
 
@@ -125,7 +125,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
 ```tsx
 // app/dashboard/loading.tsx
-import { Spinner } from '@repo/ui-web'
+import { Spinner } from '@app/ui-web'
 
 export default function Loading() {
   return (
@@ -147,7 +147,7 @@ export default function Loading() {
 
 import { useEffect } from 'react'
 import * as Sentry from '@sentry/nextjs'
-import { ErrorState } from '@repo/ui-web'
+import { ErrorState } from '@app/ui-web'
 
 export default function Error({
   error,
@@ -229,7 +229,7 @@ export default function PhotoModal({ params }: { params: { id: string } }) {
 
 ```tsx
 // app/blog/[slug]/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 // Next 15: params is async — await it.
 export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
@@ -266,7 +266,7 @@ export default function Docs({ params }: { params: { slug: string[] } }) {
 ## Route Handlers (API Routes) — rare, and never a data/CRUD layer
 
 **Do not build CRUD route handlers.** Data comes from the Frappe backend through the
-`@repo/core` `apiClient` (server components) or React Query hooks (`feature-slice`) — the web
+`@app/core` `apiClient` (server components) or React Query hooks (`feature-slice`) — the web
 app has no local DB to expose. The only legitimate route handlers are thin infrastructure
 endpoints: an **on-demand revalidation webhook**, or a narrow proxy when the browser genuinely
 can't reach Frappe directly.

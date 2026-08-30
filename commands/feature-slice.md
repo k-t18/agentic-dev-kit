@@ -9,7 +9,7 @@ argument-hint: "[paste curl/JSON/field-list, or 'new slice <name>']"
 **Arguments:** $ARGUMENTS
 
 Runs the **`feature-slice`** skill (core layering invariant, Frappe-shaped). Never overwrites
-existing files — appends only. `@repo/core` data layer only.
+existing files — appends only. `@app/core` data layer only.
 
 ## What to do
 

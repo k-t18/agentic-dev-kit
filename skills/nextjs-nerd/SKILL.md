@@ -1,6 +1,6 @@
 ---
 name: nextjs-nerd
-description: "Use when working in the Next.js App Router shell (apps/web/app/**) — routing, layouts, templates, metadata/SEO, streaming, loading.tsx/error.tsx boundaries, and (web-only) server components + server actions. The shell renders ui-web components and delegates data to @repo/core React Query hooks / the Frappe apiClient — it never builds UI inline or fetches for a component that has a native twin. Triggers on: Next.js, App Router, RSC, Server Components, Server Actions, generateMetadata, loading.tsx, error.tsx, route handlers, streaming SSR, app shell."
+description: "Use when working in the Next.js App Router shell (apps/web/app/**) — routing, layouts, templates, metadata/SEO, streaming, loading.tsx/error.tsx boundaries, and (web-only) server components + server actions. The shell renders ui-web components and delegates data to @app/core React Query hooks / the Frappe apiClient — it never builds UI inline or fetches for a component that has a native twin. Triggers on: Next.js, App Router, RSC, Server Components, Server Actions, generateMetadata, loading.tsx, error.tsx, route handlers, streaming SSR, app shell."
 license: MIT
 metadata:
   author: https://github.com/k-t18
@@ -22,7 +22,7 @@ hooks/state/tokens (those have skills).
 
 Read root `CLAUDE.md` and `apps/web/CLAUDE.md` first; this skill never overrides them. The
 backend is a remote **Frappe REST API** reached through the fetch-based `apiClient` in
-`@repo/core` — there is **no local ORM/DB** (no Prisma, no Postgres) in the web app.
+`@app/core` — there is **no local ORM/DB** (no Prisma, no Postgres) in the web app.
 
 ## Project mode decides your posture (read first)
 
@@ -35,7 +35,7 @@ Every project declares its mode at the top of `apps/web/CLAUDE.md`.
   layouts / metadata / data-loading, then renders `ui-web` components. **Any component with a
   native twin must run identically without a server**, so:
   - The shell does **not** fetch data for migratable components — they get data via
-    `@repo/core` React Query hooks (`feature-slice`), shared unchanged with native.
+    `@app/core` React Query hooks (`feature-slice`), shared unchanged with native.
   - **Server actions / `useActionState` / `useFormStatus` are banned** from `packages/ui-web`
     — they live only in the shell (and only make sense in `web-only`). Forms in `ui-web` use
     React Query mutations (`useApiMutation`, `feature-slice`).
@@ -46,7 +46,7 @@ Every project declares its mode at the top of `apps/web/CLAUDE.md`.
   metadata, streaming, loading/error boundaries.
 
 **Not for:** UI components (`web-component` / `rn-component`), data hooks / API / stores /
-types (`@repo/core`, see `feature-slice`), design tokens (`design-system-setup`), or React
+types (`@app/core`, see `feature-slice`), design tokens (`design-system-setup`), or React
 effect/perf/error-boundary discipline (`react-renderer`).
 
 ## Core Workflow
@@ -54,7 +54,7 @@ effect/perf/error-boundary discipline (`react-renderer`).
 1. **Architecture** — routes, layouts, rendering strategy; confirm the project mode.
 2. **Routing** — App Router structure with layouts, templates, `loading.tsx`/`error.tsx`.
 3. **Data** — `web-only`: server components fetch via `apiClient`. `web+native`: hand data to
-   `ui-web` via `@repo/core` React Query hooks; don't fetch server-side for migratable UI.
+   `ui-web` via `@app/core` React Query hooks; don't fetch server-side for migratable UI.
 4. **Compose** — render `ui-web` components; keep `"use client"` at the leaf boundary.
 5. **Validate** — `pnpm --filter web build` (or `turbo build`) succeeds; `tsc --noEmit`
    clean; grep shows no hardcoded hex/px and no local-DB calls; Core Web Vitals stay green.
@@ -75,8 +75,8 @@ effect/perf/error-boundary discipline (`react-renderer`).
   boundary where interactivity is required.
 - **Render `ui-web` components** for UI — never hand-build UI with raw `<ul>/<li>` +
   Tailwind in a page/layout. `loading.tsx`/`error.tsx` use `ui-web` (Spinner) + tokens.
-- Import UI from `@repo/ui-web`, data/apiClient/types from `@repo/core` — never `@/…` paths.
-- Fetch through the Frappe `apiClient` (server-side, web-only) or `@repo/core` React Query
+- Import UI from `@app/ui-web`, data/apiClient/types from `@app/core` — never `@/…` paths.
+- Fetch through the Frappe `apiClient` (server-side, web-only) or `@app/core` React Query
   hooks (`feature-slice`); use explicit `cache` / `next.revalidate` on any server fetch.
 - Use `generateMetadata` (or static `metadata`) for all SEO — never hardcode `<title>`/`<meta>`.
 - Optimize every content image with `next/image` (+ `remotePatterns` in `next.config`);
@@ -89,7 +89,7 @@ effect/perf/error-boundary discipline (`react-renderer`).
 ### MUST NOT DO
 - Import Prisma / query a local DB / spin up Postgres — the backend is Frappe via `apiClient`.
 - Convert a component to a Client Component just to fetch — fetch server-side (web-only) or
-  use a `@repo/core` hook.
+  use a `@app/core` hook.
 - (`web+native`) Fetch server-side for a component with a native twin, or use server actions /
   `useActionState` / `useFormStatus` in `ui-web`/`ui-native`.
 - Hardcode a color / spacing / radius / font (tokens only), or build UI inline in the shell.
@@ -102,9 +102,9 @@ effect/perf/error-boundary discipline (`react-renderer`).
 ```tsx
 // app/products/page.tsx
 import { Suspense } from 'react'
-import { apiClient, buildEndpoint } from '@repo/core'
-import { ProductList, Spinner } from '@repo/ui-web'
-import type { Product } from '@repo/core/features/products'
+import { apiClient, buildEndpoint } from '@app/core'
+import { ProductList, Spinner } from '@app/ui-web'
+import type { Product } from '@app/core/features/products'
 
 async function Products() {
   // Frappe-shaped apiClient; ISR every 60s. No local DB.
@@ -124,14 +124,14 @@ export default function Page() {
 }
 ```
 
-> In **`web+native`**, `ProductList` fetches its own data via a `@repo/core` React Query hook
+> In **`web+native`**, `ProductList` fetches its own data via a `@app/core` React Query hook
 > (`feature-slice`) so the native twin shares the exact path — the shell just renders it.
 
 ### generateMetadata for dynamic SEO
 ```tsx
 // app/products/[id]/page.tsx
 import type { Metadata } from 'next'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }, // Next 15: params is async
@@ -154,7 +154,7 @@ export async function generateMetadata(
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 const CreateProduct = z.object({ name: z.string().min(1) })
 
@@ -169,7 +169,7 @@ export async function createProduct(formData: FormData) {
 ```
 
 > Never in `ui-web`/`ui-native`. In `web+native`, a create form is a React Query mutation
-> (`useApiMutation`, `feature-slice`), with offline writes via the outbox (`@repo/offline-kit`).
+> (`useApiMutation`, `feature-slice`), with offline writes via the outbox (`@8848digital/offline-kit`).
 
 ## Output Templates
 
@@ -185,5 +185,5 @@ When implementing shell features, provide:
 Next.js 14+/15, App Router, React Server Components, Server Actions (web-only shell),
 Streaming SSR, Partial Prerendering, `next/image`, Metadata API, Route Handlers (thin Frappe
 proxy / revalidation only), Edge Runtime, Turbopack. Data → Frappe `apiClient` + React Query
-(`feature-slice`); UI → `@repo/ui-web`; tokens → `design-system-setup`; React discipline →
+(`feature-slice`); UI → `@app/ui-web`; tokens → `design-system-setup`; React discipline →
 `react-renderer`.

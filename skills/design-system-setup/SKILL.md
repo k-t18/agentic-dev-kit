@@ -16,7 +16,7 @@ metadata:
 # Design System Setup
 
 Establishes a monorepo-aware design system: a **single source of truth in
-`@repo/core`** that feeds two different styling systems — Tailwind on web (Next.js),
+`@app/core`** that feeds two different styling systems — Tailwind on web (Next.js),
 `StyleSheet` on native (bare RN CLI) — with no duplication, drift, or platform bleed.
 
 Read root `CLAUDE.md` first; this skill never overrides it.
@@ -41,7 +41,7 @@ Figma (source of truth)
 - `tokens/index.ts` is always the single source of truth.
 - `tailwind.config.ts` imports tokens — it never defines them.
 - `rn-styles.ts` is always derived from `index.ts` — never hand-edited.
-- No platform-specific code ever enters `@repo/core`.
+- No platform-specific code ever enters `@app/core`.
 - Every extraction produces **both** `index.ts` and `rn-styles.ts` — paired output.
 
 ## Core principles
@@ -120,7 +120,7 @@ for ambiguities that would materially break the system.
 
 ## Outcome
 
-A single token source in `@repo/core/src/tokens/index.ts`, a StyleSheet-safe derived
+A single token source in `@app/core/src/tokens/index.ts`, a StyleSheet-safe derived
 `rn-styles.ts`, a Tailwind config that imports tokens, web font loading, native font
 instructions, zero hardcoded values in component packages, and a documented list of
 missing/ambiguous tokens needing designer input.

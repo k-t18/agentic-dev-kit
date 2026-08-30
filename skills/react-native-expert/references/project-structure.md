@@ -1,8 +1,8 @@
 # Project Structure
 
 The native app is a **bare React Native CLI** app inside the Turborepo monorepo. It is a
-*consumer*: UI comes from `@repo/ui-native`, and hooks/API/stores/types/tokens from
-`@repo/core`. It does **not** define its own component library, API client, stores, or color
+*consumer*: UI comes from `@app/ui-native`, and hooks/API/stores/types/tokens from
+`@app/core`. It does **not** define its own component library, API client, stores, or color
 constants — those live in packages.
 
 ## Monorepo layout (native app)
@@ -12,7 +12,7 @@ apps/
 └── native/                     # bare RN CLI app (consumer)
     ├── src/
     │   ├── navigation/         # React Navigation: RootNavigator, TabNavigator, types, linking
-    │   ├── screens/            # screen components (compose @repo/ui-native + @repo/core hooks)
+    │   ├── screens/            # screen components (compose @app/ui-native + @app/core hooks)
     │   └── App.tsx
     ├── android/                # native project (Gradle)
     ├── ios/                    # native project (CocoaPods)
@@ -28,7 +28,7 @@ packages/
 ```
 
 > No local `components/ui`, `services/api.ts`, `stores/`, or `constants/colors.ts` in the app —
-> components → `@repo/ui-native`, data/API/stores/types → `@repo/core`, colors → tokens.
+> components → `@app/ui-native`, data/API/stores/types → `@app/core`, colors → tokens.
 
 ## metro.config.js (monorepo — watchFolders required)
 
@@ -41,7 +41,7 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 
 /** @type {import('@react-native/metro-config').MetroConfig} */
 const config = {
-  // Watch the whole monorepo so Metro resolves @repo/* packages (design-system-setup pitfall)
+  // Watch the whole monorepo so Metro resolves @app/* packages (design-system-setup pitfall)
   watchFolders: [workspaceRoot],
   resolver: {
     nodeModulesPaths: [
@@ -54,7 +54,7 @@ const config = {
 module.exports = mergeConfig(getDefaultConfig(projectRoot), config);
 ```
 
-> Removing `watchFolders` silently breaks Metro's resolution of `@repo/*` — never delete it.
+> Removing `watchFolders` silently breaks Metro's resolution of `@app/*` — never delete it.
 
 ## babel.config.js
 
@@ -79,7 +79,7 @@ module.exports = {
 }
 ```
 
-> `@repo/*` package resolution is handled by the workspace (pnpm) + Metro, not per-app `@/*`
+> `@app/*` package resolution is handled by the workspace (pnpm) + Metro, not per-app `@/*`
 > path aliases.
 
 ## Essential dependencies (no Expo)
@@ -97,14 +97,14 @@ module.exports = {
     "react-native-gesture-handler": "^2.14.0",
     "react-native-vector-icons": "^10.0.0",
     "react-native-mmkv": "^2.11.0",
-    "@repo/ui-native": "workspace:*",
-    "@repo/core": "workspace:*"
+    "@app/ui-native": "workspace:*",
+    "@app/core": "workspace:*"
   }
 }
 ```
 
 > Server data (`@tanstack/react-query`) and global state (`zustand`) are dependencies of
-> `@repo/core`, not the app — the app consumes the hooks/stores, it doesn't wire them.
+> `@app/core`, not the app — the app consumes the hooks/stores, it doesn't wire them.
 
 ## Quick Reference
 
@@ -112,6 +112,6 @@ module.exports = {
 |----------|---------|
 | `apps/native/src/navigation/` | React Navigation navigators + types |
 | `apps/native/src/screens/` | Screens (compose ui-native + core hooks) |
-| `@repo/ui-native` | Native components (`rn-component`) |
-| `@repo/core` | Hooks, API, stores, types, tokens |
+| `@app/ui-native` | Native components (`rn-component`) |
+| `@app/core` | Hooks, API, stores, types, tokens |
 | `metro.config.js` | Monorepo Metro (keep `watchFolders`) |

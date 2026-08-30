@@ -41,7 +41,7 @@ export function useTheme() {
 
 ## Global store — Zustand → `zustand-slice`
 
-The canonical store-slice pattern (persist, selectors, `@repo/core/state`) is owned by the
+The canonical store-slice pattern (persist, selectors, `@app/core/state`) is owned by the
 **`zustand-slice`** skill — follow it when adding a store. Read with narrow selectors:
 
 ```tsx

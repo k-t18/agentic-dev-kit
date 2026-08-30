@@ -1,7 +1,7 @@
 # Tailwind intent → StyleSheet + rnTokens
 
 Native has no Tailwind. Express the same design intent in `StyleSheet.create` using
-`rnTokens` from `@repo/core/tokens/rn-styles`. Every value comes from a token.
+`rnTokens` from `@app/core/tokens/rn-styles`. Every value comes from a token.
 
 ## Colors
 

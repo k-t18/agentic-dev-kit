@@ -72,7 +72,7 @@ composes with SSR (`{ ssr: false }` to skip server render for a client-only widg
 
 ```tsx
 import dynamic from 'next/dynamic';
-const AdminPanel = dynamic(() => import('@repo/ui-web').then((m) => m.AdminPanel), {
+const AdminPanel = dynamic(() => import('@app/ui-web').then((m) => m.AdminPanel), {
   loading: () => <Loading />,
 });
 ```

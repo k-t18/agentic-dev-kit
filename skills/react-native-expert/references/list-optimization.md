@@ -3,7 +3,7 @@
 > This reference owns **list performance** (windowing, `getItemLayout`, FlashList, batching).
 > The row component (`ListItem`) is a `packages/ui-native` component built per `rn-component`
 > (every string in `<Text>`, keyed styles), and every `styles.*` value comes from `rnTokens`
-> (`@repo/core/tokens/rn-styles`) — import `rnTokens` where these examples use styling.
+> (`@app/core/tokens/rn-styles`) — import `rnTokens` where these examples use styling.
 
 ## Optimized FlatList
 
@@ -136,11 +136,11 @@ function RefreshableList({ data, onRefresh }: Props) {
 ## Infinite Scroll
 
 Pagination is **server state** — don't hand-roll `useState` + `fetch`. Use a React Query
-`useInfiniteQuery` hook from `@repo/core` (`feature-slice`); this screen only wires the list
+`useInfiniteQuery` hook from `@app/core` (`feature-slice`); this screen only wires the list
 to it. The same hook is shared with the web twin.
 
 ```typescript
-import { useItemsInfinite } from '@repo/core/features/items'; // feature-slice useInfiniteQuery hook
+import { useItemsInfinite } from '@app/core/features/items'; // feature-slice useInfiniteQuery hook
 
 function InfiniteList() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useItemsInfinite();

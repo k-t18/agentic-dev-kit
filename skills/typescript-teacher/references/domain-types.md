@@ -8,7 +8,7 @@
   ≥2 features or app-wide (e.g. `User`, `ApiError`, shared unions).
 - Test: one feature uses it → local; shared across features → global. (Organise by domain,
   not by technical type — same reasoning as the slice architecture.)
-- Never redefine a shared type in an app package — import it from `@repo/core`.
+- Never redefine a shared type in an app package — import it from `@app/core`.
 
 ## Entity contract — one shape for local + remote
 

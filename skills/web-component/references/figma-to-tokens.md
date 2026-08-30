@@ -7,7 +7,7 @@ The Figma MCP is connected (file ID in `.claude/settings.json`). Pulling the nod
 
 | Tool | Returns | Use for |
 | --- | --- | --- |
-| `get_variable_defs` | Figma **variables** (the design-token definitions) | **Primary** — variables map 1:1 to `@repo/core/tokens`. Resolve values to token names from here first. |
+| `get_variable_defs` | Figma **variables** (the design-token definitions) | **Primary** — variables map 1:1 to `@app/core/tokens`. Resolve values to token names from here first. |
 | `get_design_context` | Structured design/code context for the node | Layout, hierarchy, per-layer color/spacing/typography |
 | `get_screenshot` | Rendered image of the node | Visual cross-check of the built component |
 | `get_metadata` | Node tree / structure | Understanding nesting and which sub-layers exist |
@@ -37,7 +37,7 @@ For each visual property on the node, resolve to a **token name** (see
    If Figma shows `17px`, confirm intent — usually it's meant to be a token step.
 3. **No matching token → flag, don't hardcode.** If a color/size has no token:
    - Report it: *"Figma value `#7C3AED` has no matching token."*
-   - Propose adding it to `@repo/core/tokens` (tokens are generated from Figma, so a
+   - Propose adding it to `@app/core/tokens` (tokens are generated from Figma, so a
      missing token usually means the token file is stale).
    - Do **not** emit a raw value or the nearest-but-wrong token silently.
 4. **Cross-check** the finished component against `get_screenshot`.

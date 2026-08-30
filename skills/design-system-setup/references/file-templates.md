@@ -129,7 +129,7 @@ work. Include `app/` in `content` (Next App Router).
 ```ts
 // /apps/web/tailwind.config.ts
 import type { Config } from 'tailwindcss';
-import { colors, typography, spacing, radius, shadow } from '@repo/core/tokens';
+import { colors, typography, spacing, radius, shadow } from '@app/core/tokens';
 
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}', '../../packages/ui-web/src/**/*.{ts,tsx}'],

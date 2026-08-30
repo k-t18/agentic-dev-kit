@@ -6,32 +6,32 @@
 > causing extra re-renders? Most "sync state to props/state" effects are unnecessary —
 > compute during render or in the event handler instead. Effects are for **external**
 > side-effects only (subscriptions, DOM, timers, non-React systems). Never fetch server
-> data in an effect — use `@repo/core` React Query hooks (`feature-slice`).
+> data in an effect — use `@app/core` React Query hooks (`feature-slice`).
 
 ## Where a custom hook lives (web+native)
 
-Placement follows the golden rule — platform-agnostic logic in `@repo/core`, platform
+Placement follows the golden rule — platform-agnostic logic in `@app/core`, platform
 APIs kept out of it:
 
 | Hook touches…                                                   | Lives in                        | Native twin                                  |
 | --------------------------------------------------------------- | ------------------------------- | -------------------------------------------- |
-| Pure logic / timers only (`useDebounce`, `usePrevious`)         | `@repo/core` (shared)           | none — the same file runs on both            |
+| Pure logic / timers only (`useDebounce`, `usePrevious`)         | `@app/core` (shared)           | none — the same file runs on both            |
 | `window` / DOM / `localStorage` / `matchMedia`                  | `packages/ui-web` (web-only)    | hand-write a twin (`Dimensions`, AsyncStorage) |
 | Server / API data                                               | ❌ not here — `feature-slice`   | shared React Query hook, unchanged           |
 
 > A hook that imports `window`, `document`, `localStorage`, or `matchMedia` can **never**
-> live in `@repo/core` (golden rule). If you need it shared, keep the pure part in core and
+> live in `@app/core` (golden rule). If you need it shared, keep the pure part in core and
 > push the platform call to the component (`ui-web` / `ui-native`) or a platform interface.
 
 ## Custom Hook Pattern (non-data)
 
-There is **no `useApi` here.** Server data is fetched through `@repo/core` React Query
+There is **no `useApi` here.** Server data is fetched through `@app/core` React Query
 hooks (`useApiQuery` / `useApiMutation`) owned by `feature-slice` — never a hand-rolled
 `fetch` + `useState` + `useEffect`. This skill's custom hooks are for **non-data**
-concerns only. Canonical example (platform-agnostic → `@repo/core`):
+concerns only. Canonical example (platform-agnostic → `@app/core`):
 
 ```tsx
-// usePrevious — pure logic, belongs in @repo/core
+// usePrevious — pure logic, belongs in @app/core
 import { useRef, useEffect } from 'react';
 
 export function usePrevious<T>(value: T): T | undefined {
@@ -43,7 +43,7 @@ export function usePrevious<T>(value: T): T | undefined {
 }
 ```
 
-## useDebounce (platform-agnostic → `@repo/core`)
+## useDebounce (platform-agnostic → `@app/core`)
 
 ```tsx
 function useDebounce<T>(value: T, delay: number): T {
@@ -62,15 +62,15 @@ function useDebounce<T>(value: T, delay: number): T {
 function Search() {
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 300);
-  const { data } = useSearchResults(debouncedQuery); // @repo/core hook, keyed by query
+  const { data } = useSearchResults(debouncedQuery); // @app/core hook, keyed by query
   return <SearchResults results={data} />;
 }
 ```
 
 ## useLocalStorage (web-only → `packages/ui-web`)
 
-Touches `localStorage`/`window`, so it **cannot** live in `@repo/core`. The native twin
-uses AsyncStorage/MMKV. Note: durable app data belongs to `@repo/core` / `@repo/offline-kit`
+Touches `localStorage`/`window`, so it **cannot** live in `@app/core`. The native twin
+uses AsyncStorage/MMKV. Note: durable app data belongs to `@app/core` / `@8848digital/offline-kit`
 (`OfflineDb`), not a component-level hook — use this only for view-local UI prefs.
 
 ```tsx
@@ -91,7 +91,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 
 ## useMediaQuery (web-only → `packages/ui-web`)
 
-Uses `matchMedia`, so it stays out of `@repo/core`. The native responsive path is
+Uses `matchMedia`, so it stays out of `@app/core`. The native responsive path is
 `useWindowDimensions` / `Dimensions` — see `rn-component` / `react-native-expert`.
 
 ```tsx
@@ -175,10 +175,10 @@ useEffect(() => {
 
 | Custom Hook | Use Case | Placement |
 |-------------|----------|-----------|
-| useDebounce | Input delay | `@repo/core` (shared) |
-| usePrevious | Prior value of a prop/state | `@repo/core` (shared) |
+| useDebounce | Input delay | `@app/core` (shared) |
+| usePrevious | Prior value of a prop/state | `@app/core` (shared) |
 | useLocalStorage | View-local UI prefs | `ui-web` (web-only) |
 | useMediaQuery | Responsive logic | `ui-web` (web-only) |
 
-> Server data fetching is **not** a custom hook here — use `@repo/core` React Query hooks
+> Server data fetching is **not** a custom hook here — use `@app/core` React Query hooks
 > (`feature-slice`).

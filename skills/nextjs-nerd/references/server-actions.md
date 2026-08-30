@@ -4,9 +4,9 @@
 > in `web-only` projects. They are **banned from `packages/ui-web`/`ui-native`** (§5 boundary):
 > a component with a native twin must run without a server. In **`web+native`**, form
 > submission is a React Query mutation (`useApiMutation`, `feature-slice`), with offline writes
-> via the outbox (`@repo/offline-kit`).
+> via the outbox (`@8848digital/offline-kit`).
 >
-> **No local DB.** Mutations call the Frappe `apiClient` from `@repo/core` — never Prisma/`db`.
+> **No local DB.** Mutations call the Frappe `apiClient` from `@app/core` — never Prisma/`db`.
 > Validate input with Zod before the call.
 
 ## Basic Server Action
@@ -16,7 +16,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function createPost(formData: FormData) {
   const title = formData.get('title') as string
@@ -53,7 +53,7 @@ export default function NewPost() {
 
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 const CreatePostSchema = z.object({
   title: z.string().min(3).max(100),
@@ -134,7 +134,7 @@ export function CreatePostForm() {
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function createPost(formData: FormData) {
   const { message } = await apiClient.post(buildEndpoint('post.create'), {
@@ -150,7 +150,7 @@ export async function createPost(formData: FormData) {
 ## Optimistic Updates
 
 > **In this monorepo, optimistic UI is a React Query mutation** (`onMutate` + rollback) owned
-> by `feature-slice`, with offline writes reconciled through the `@repo/offline-kit` outbox —
+> by `feature-slice`, with offline writes reconciled through the `@8848digital/offline-kit` outbox —
 > that path is shared with native and survives offline. The `useOptimistic` primitive below is
 > a `web-only` app-shell convenience for ephemeral optimism that never needs to persist or
 > sync; the persist call is still the Frappe `apiClient`, never a local `db`.
@@ -204,8 +204,8 @@ export function TodoList({ todos }: { todos: Todo[] }) {
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { getServerSession } from '@repo/core/auth'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { getServerSession } from '@app/core/auth'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function createPost(formData: FormData) {
   const session = await getServerSession() // Frappe session
@@ -228,7 +228,7 @@ export async function createPost(formData: FormData) {
 
 ```tsx
 // app/posts/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 import { revalidatePath } from 'next/cache'
 
 export default async function Posts() {
@@ -285,7 +285,7 @@ export function DeleteButton({ postId }: { postId: string }) {
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function deletePost(postId: string) {
   await apiClient.delete(buildEndpoint('post.delete', { id: postId }))
@@ -300,7 +300,7 @@ export async function deletePost(postId: string) {
 'use server'
 
 import { revalidatePath, revalidateTag } from 'next/cache'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function updatePost(id: string, data: UpdatePostData) {
   await apiClient.put(buildEndpoint('post.update', { id }), data)
@@ -323,7 +323,7 @@ export async function updatePost(id: string, data: UpdatePostData) {
 // app/profile/actions.ts
 'use server'
 
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function uploadAvatar(formData: FormData) {
   const file = formData.get('avatar') as File
@@ -367,7 +367,7 @@ export function UploadForm() {
 // app/actions.ts
 'use server'
 
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function createPost(formData: FormData) {
   try {
@@ -438,8 +438,8 @@ export async function getTheme() {
 // app/actions.ts
 'use server'
 
-import { getServerSession } from '@repo/core/auth'
-import { ratelimit } from '@repo/core/ratelimit'
+import { getServerSession } from '@app/core/auth'
+import { ratelimit } from '@app/core/ratelimit'
 
 export async function createPost(formData: FormData) {
   const session = await getServerSession()

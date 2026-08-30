@@ -57,7 +57,7 @@ The loading indicator is `ActivityIndicator`, not an icon.
 - **Error** (inputs) — error-colored border + a `<Text>` message; wire a11y (see
   `rn-accessibility.md`).
 - **Empty / populated** (data) — render an empty `View`+`Text` block when the list is
-  empty; the async loading/error/empty decision comes from the `@repo/core` hook
+  empty; the async loading/error/empty decision comes from the `@app/core` hook
   (`isLoading`/`isError`/`!data`) exactly as on web — the hook is unchanged.
 
 ```tsx

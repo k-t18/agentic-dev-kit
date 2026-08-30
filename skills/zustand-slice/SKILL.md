@@ -1,12 +1,12 @@
 ---
 name: zustand-slice
-description: Use when adding or editing a global client-state store slice in packages/core/src/state (Zustand). Scaffolds a flat-file store (state + actions + selectors colocated) with immutable updates, narrow selector hooks, and cross-platform persist via injected storage (core stays platform-agnostic — the app wires localStorage on web / MMKV on native). Two modes: scaffold a new store, or append a field/action to an existing one. Not for server state (feature-slice), local/Context state (react-renderer), or offline domain data (offline-kit). Invoke for zustand store, global state, store slice, persist, selectors, @repo/core/state.
+description: Use when adding or editing a global client-state store slice in packages/core/src/state (Zustand). Scaffolds a flat-file store (state + actions + selectors colocated) with immutable updates, narrow selector hooks, and cross-platform persist via injected storage (core stays platform-agnostic — the app wires localStorage on web / MMKV on native). Two modes: scaffold a new store, or append a field/action to an existing one. Not for server state (feature-slice), local/Context state (react-renderer), or offline domain data (offline-kit). Invoke for zustand store, global state, store slice, persist, selectors, @app/core/state.
 license: MIT
 metadata:
   author: https://github.com/k-t18
   version: "1.0.0"
   domain: frontend
-  triggers: zustand, zustand store, global state, store slice, persist, selector, useShallow, @repo/core/state, packages/core/state, client state store
+  triggers: zustand, zustand store, global state, store slice, persist, selector, useShallow, @app/core/state, packages/core/state, client state store
   role: specialist
   scope: implementation
   output-format: code
@@ -15,17 +15,17 @@ metadata:
 
 # Zustand Slice (packages/core/state)
 
-Generates a global client-state store slice in `@repo/core/state` that both apps (web + native) consume unchanged.
+Generates a global client-state store slice in `@app/core/state` that both apps (web + native) consume unchanged.
 
 ## Role Definition
 
-Expert Zustand state engineer for a Turborepo monorepo, scaffolding **flat-file** store slices in `@repo/core/state` where state, actions, and selectors are colocated. Enforces the one rule — **global _client_ state only, and `@repo/core` stays platform-agnostic**: server/API data is React Query in the data layer (`feature-slice`), and `persist` reads its backend through **injected storage** (`getStateStorage()`) so the store never imports `localStorage`, `window`, `react-native`, or `react-native-mmkv`. Reads are always narrow selectors, never the whole store. Read root `CLAUDE.md` **§3 (golden rule)** and **§5** first — this skill enforces them.
+Expert Zustand state engineer for a Turborepo monorepo, scaffolding **flat-file** store slices in `@app/core/state` where state, actions, and selectors are colocated. Enforces the one rule — **global _client_ state only, and `@app/core` stays platform-agnostic**: server/API data is React Query in the data layer (`feature-slice`), and `persist` reads its backend through **injected storage** (`getStateStorage()`) so the store never imports `localStorage`, `window`, `react-native`, or `react-native-mmkv`. Reads are always narrow selectors, never the whole store. Read root `CLAUDE.md` **§3 (golden rule)** and **§5** first — this skill enforces them.
 
 ## When to Use This Skill
 
 - Adding a `packages/core/src/state/<name>Store.ts` slice, or a field/action to one.
 
-**Not for:** server/API state (`feature-slice` — React Query), local component state + Context (`react-renderer`), design tokens (`design-system-setup`), or durable synced domain data (`@repo/offline-kit`).
+**Not for:** server/API state (`feature-slice` — React Query), local component state + Context (`react-renderer`), design tokens (`design-system-setup`), or durable synced domain data (`@8848digital/offline-kit`).
 
 ## Core Workflow
 
@@ -42,8 +42,8 @@ Expert Zustand state engineer for a Turborepo monorepo, scaffolding **flat-file*
 | ✅ Global client state | ❌ Not a store |
 | --- | --- |
 | Cart, cross-screen filters, UI prefs | Server responses / lists (→ `feature-slice`) |
-| Wizard / multi-step form progress | Auth **token vault** (→ `@repo/core` auth/secure storage) |
-| Selected entity shared across screens | Durable synced records (→ `@repo/offline-kit`) |
+| Wizard / multi-step form progress | Auth **token vault** (→ `@app/core` auth/secure storage) |
+| Selected entity shared across screens | Durable synced records (→ `@8848digital/offline-kit`) |
 | Session UI flags (e.g. `isSidebarOpen`) | State used by one component (→ `useState`, `react-renderer`) |
 
 ### Store anatomy (flat file)
@@ -122,7 +122,7 @@ export { configureStateStorage } from './storage';
 ### MUST DO
 
 - Store **global client state only**; route server data to `feature-slice` and local/Context to `react-renderer`.
-- Keep `@repo/core` platform-agnostic — inject persist storage via `getStateStorage()`; never import `localStorage`/`window`/`react-native`/`react-native-mmkv` in the store.
+- Keep `@app/core` platform-agnostic — inject persist storage via `getStateStorage()`; never import `localStorage`/`window`/`react-native`/`react-native-mmkv` in the store.
 - Read via **narrow selectors** (`useCartStore((s) => s.items)`); export named selector hooks; use `useShallow` for multi-field selects.
 - Make updates immutable in `set`; colocate actions with state.
 - Use `interface` for the state shape, `type` for unions; never `any` (unknown → narrow).
@@ -146,4 +146,4 @@ When scaffolding or extending a store, provide:
 
 ## Knowledge Reference
 
-Zustand, create, persist, createJSONStorage, injected storage, getStateStorage, useShallow, narrow selectors, immutable updates, colocated actions, @repo/core/state, packages/core/state, global client state, platform-agnostic, skipHydration, SSR hydration, selector hooks, barrel exports
+Zustand, create, persist, createJSONStorage, injected storage, getStateStorage, useShallow, narrow selectors, immutable updates, colocated actions, @app/core/state, packages/core/state, global client state, platform-agnostic, skipHydration, SSR hydration, selector hooks, barrel exports

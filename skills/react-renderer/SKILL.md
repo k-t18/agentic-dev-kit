@@ -114,12 +114,12 @@ const onSelect = useCallback(() => selectItem(id), [id]);
 - Memoize callbacks/objects **only** when passed to a memoized child
 - Error boundaries around async/error-prone subtrees; Suspense for async
 - In `ui-web` handlers, use `onPress` (not `onClick`) for migration parity
-- Place non-data custom hooks by platform: pure logic → `@repo/core`; `window`/DOM hooks →
-  `ui-web` (never in `@repo/core`) with a hand-written native twin
+- Place non-data custom hooks by platform: pure logic → `@app/core`; `window`/DOM hooks →
+  `ui-web` (never in `@app/core`) with a hand-written native twin
 
 ### MUST NOT DO
 - Mutate state directly; use array index as a `key`
-- Fetch server data in a `useEffect` — use `@repo/core` hooks (`feature-slice`)
+- Fetch server data in a `useEffect` — use `@app/core` hooks (`feature-slice`)
 - Forget effect cleanup; ignore React strict-mode warnings
 - Show raw errors to users; skip error boundaries in production
 - Use server-action hooks (`useActionState`/`useFormStatus`/inline `'use server'`) in

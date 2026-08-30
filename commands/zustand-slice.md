@@ -8,8 +8,8 @@ argument-hint: "[new store <name>, or 'add <field/action> to <store>']"
 
 **Arguments:** $ARGUMENTS
 
-Runs the **`zustand-slice`** skill (global client-state stores in `@repo/core/state`). Never
-overwrites existing stores — appends only. `@repo/core` stays platform-agnostic.
+Runs the **`zustand-slice`** skill (global client-state stores in `@app/core/state`). Never
+overwrites existing stores — appends only. `@app/core` stays platform-agnostic.
 
 ## What to do
 
@@ -29,7 +29,7 @@ overwrites existing stores — appends only. `@repo/core` stays platform-agnosti
      selector. Leave existing members untouched.
 
 3. **Enforce the boundaries** — global **client** state only (server data → `feature-slice`,
-   local/Context → `react-renderer`); `@repo/core` platform-agnostic (persist via injected
+   local/Context → `react-renderer`); `@app/core` platform-agnostic (persist via injected
    `getStateStorage()`, never `localStorage`/MMKV/`react-native`); narrow selectors; immutable
    updates; no `any`; named exports + barrel.
 

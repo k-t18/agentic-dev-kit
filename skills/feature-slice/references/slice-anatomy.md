@@ -24,8 +24,8 @@ genuinely-shared types go in `packages/core/src/types/`.
 ```
 hooks.ts ──► repo.ts ──► data/local.ts (SQL)
                     └──► data/remote.ts (HTTP)
-usecases.ts / outbox.ts ──► @repo/offline-kit (getOfflineDb, insertRow, OutboxAdapter)
-features ──► shared-domain ──► @repo/offline-kit          (never the reverse)
+usecases.ts / outbox.ts ──► @8848digital/offline-kit (getOfflineDb, insertRow, OutboxAdapter)
+features ──► shared-domain ──► @8848digital/offline-kit          (never the reverse)
 ```
 
 - Only `data/**`, `usecases.ts`, `outbox.ts` (and `shared-domain/**`) may call

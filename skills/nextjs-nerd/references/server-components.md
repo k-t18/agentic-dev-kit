@@ -1,7 +1,7 @@
 # React Server Components
 
 > **Boundary (`web+native`):** the shell may fetch server-side only for **shell-owned,
-> non-migratable** content. Any component with a native twin gets its data from a `@repo/core`
+> non-migratable** content. Any component with a native twin gets its data from a `@app/core`
 > React Query hook (`feature-slice`) so web and native share one path — do **not** fetch it
 > server-side and pass props. Server-side data here always goes through the Frappe `apiClient`;
 > there is no local DB.
@@ -10,8 +10,8 @@
 
 ```tsx
 // app/page.tsx - Server Component by default
-import { apiClient, buildEndpoint } from '@repo/core'
-import { UserList } from '@repo/ui-web'
+import { apiClient, buildEndpoint } from '@app/core'
+import { UserList } from '@app/ui-web'
 
 export default async function Page() {
   // Data fetching in a Server Component — via the Frappe apiClient
@@ -64,7 +64,7 @@ Use `'use client'` when you need:
 ```tsx
 // app/page.tsx - Server Component
 import { ClientWrapper } from './client-wrapper'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export default async function Page() {
   const { message } = await apiClient.get(buildEndpoint('dashboard.summary'))
@@ -145,7 +145,7 @@ export async function SlowComponent() {
 
 ```tsx
 // app/dashboard/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export default async function Dashboard() {
   // Fetch in parallel through the apiClient — no client-side waterfall
@@ -167,7 +167,7 @@ export default async function Dashboard() {
 
 ```tsx
 // app/artist/[id]/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export default async function ArtistPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -189,7 +189,7 @@ export default async function ArtistPage({ params }: { params: Promise<{ id: str
 ```tsx
 // lib/data.ts
 import { cache } from 'react'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 // React cache() dedupes the apiClient call within one server render
 export const getUser = cache(async (id: string) => {
@@ -226,9 +226,9 @@ export default async function Page() {
 
 ```tsx
 // app/dashboard/layout.tsx
-import { getServerSession } from '@repo/core/auth'
-import { apiClient, buildEndpoint } from '@repo/core'
-import { Sidebar } from '@repo/ui-web'
+import { getServerSession } from '@app/core/auth'
+import { apiClient, buildEndpoint } from '@app/core'
+import { Sidebar } from '@app/ui-web'
 
 export default async function DashboardLayout({
   children,
@@ -373,9 +373,9 @@ export default async function Page() {
 ## Best Practices
 
 1. **Default to Server Components** - Only use 'use client' when needed
-2. **Render ui-web** - Pages/layouts render `@repo/ui-web` components; never hand-build UI inline
+2. **Render ui-web** - Pages/layouts render `@app/ui-web` components; never hand-build UI inline
 3. **Move Client Components down** - Push them to leaves of component tree
 4. **Delegate data** - `web-only`: fetch via `apiClient` and pass down. `web+native`: migratable
-   components fetch via `@repo/core` React Query hooks (`feature-slice`), not server props
+   components fetch via `@app/core` React Query hooks (`feature-slice`), not server props
 5. **Cache expensive operations** - Use React `cache()` to dedupe apiClient calls per render
 6. **No local DB** - There is no Prisma/Postgres; all data is the Frappe `apiClient`

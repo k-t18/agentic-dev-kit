@@ -29,12 +29,12 @@ Read root `CLAUDE.md` first; this skill never overrides it. Native is **React 18
 
 > **Bare RN CLI, not Expo.** No `expo`, `expo-router`, or `@expo/*`. Navigation is
 > **React Navigation**; styling is `StyleSheet` with `rnTokens` from
-> `@repo/core/tokens/rn-styles` — never hardcoded hex/px.
+> `@app/core/tokens/rn-styles` — never hardcoded hex/px.
 
 ## Core Workflow
 
 1. **Setup** — React Navigation, TypeScript config → _verify the monorepo builds: `pnpm install` and confirm `metro.config.js` keeps its `watchFolders` (design-system-setup) before proceeding_
-2. **Structure** — the native app is `apps/<native>` consuming `@repo/ui-native` + `@repo/core`
+2. **Structure** — the native app is `apps/<native>` consuming `@app/ui-native` + `@app/core`
 3. **Implement** — components from `rn-component`, wired with platform handling → _run on iOS simulator and Android emulator; check Metro output for errors before moving on_
 4. **Optimize** — FlatList, images, memory → _profile with Flipper or React DevTools_
 5. **Test** — Both platforms, real devices
@@ -66,8 +66,8 @@ Load detailed guidance based on context:
 - Test on both iOS and Android real devices
 - Use KeyboardAvoidingView for forms
 - Handle Android back button in navigation
-- Style with `rnTokens` from `@repo/core/tokens/rn-styles`; navigate with React Navigation
-- Build components via `rn-component`; get server data via `@repo/core` hooks (`feature-slice`)
+- Style with `rnTokens` from `@app/core/tokens/rn-styles`; navigate with React Navigation
+- Build components via `rn-component`; get server data via `@app/core` hooks (`feature-slice`)
 
 ### MUST NOT DO
 - Use ScrollView for large lists
@@ -91,7 +91,7 @@ Load detailed guidance based on context:
 ```tsx
 import React, { memo, useCallback } from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
+import { rnTokens } from '@app/core/tokens/rn-styles';
 
 type Item = { id: string; title: string };
 
@@ -140,8 +140,8 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
-import { Input } from '@repo/ui-native'; // the field is a ui-native component (rn-component)
+import { rnTokens } from '@app/core/tokens/rn-styles';
+import { Input } from '@app/ui-native'; // the field is a ui-native component (rn-component)
 
 export function LoginForm() {
   return (
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
 
 ```tsx
 import { StyleSheet, View, Text } from 'react-native';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
+import { rnTokens } from '@app/core/tokens/rn-styles';
 
 export function StatusChip({ label }: { label: string }) {
   return (
@@ -209,6 +209,6 @@ When implementing React Native features, deliver:
 ## Knowledge Reference
 
 Bare React Native CLI (0.73+, React 18), React Navigation 7, Reanimated 3, Gesture Handler,
-MMKV / AsyncStorage (native view-local prefs). Data → `@repo/core` React Query
-(`feature-slice`); global state → `zustand-slice`; durable/offline data → `@repo/offline-kit`;
+MMKV / AsyncStorage (native view-local prefs). Data → `@app/core` React Query
+(`feature-slice`); global state → `zustand-slice`; durable/offline data → `@8848digital/offline-kit`;
 components → `rn-component`; tokens → `design-system-setup`.

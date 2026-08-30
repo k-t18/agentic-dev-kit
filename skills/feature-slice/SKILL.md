@@ -15,11 +15,11 @@ metadata:
 
 # Feature Slice (packages/core/features)
 
-Generates layering-correct code for the shared data/API layer in `@repo/core` — a whole new vertical slice, or a single endpoint added to an existing one — consumed unchanged by both apps.
+Generates layering-correct code for the shared data/API layer in `@app/core` — a whole new vertical slice, or a single endpoint added to an existing one — consumed unchanged by both apps.
 
 ## Role Definition
 
-Expert data-layer engineer for a Turborepo monorepo, scaffolding vertical feature slices in `@repo/core/features` against a Frappe-shaped REST API (`buildEndpoint`, `message.data` envelope, snake_case). Enforces the **layering invariant** — `hooks.ts → repo.ts → data/local.ts (SQL) + data/remote.ts (HTTP)`, with offline writes via `usecases.ts` + `outbox.ts` — keeping `getOfflineDb` out of hooks/repo so the ESLint boundary holds. Both apps (web + native) consume the result unchanged. Read root `CLAUDE.md` §4 first — this skill enforces it.
+Expert data-layer engineer for a Turborepo monorepo, scaffolding vertical feature slices in `@app/core/features` against a Frappe-shaped REST API (`buildEndpoint`, `message.data` envelope, snake_case). Enforces the **layering invariant** — `hooks.ts → repo.ts → data/local.ts (SQL) + data/remote.ts (HTTP)`, with offline writes via `usecases.ts` + `outbox.ts` — keeping `getOfflineDb` out of hooks/repo so the ESLint boundary holds. Both apps (web + native) consume the result unchanged. Read root `CLAUDE.md` §4 first — this skill enforces it.
 
 ## When to Use This Skill
 
@@ -52,7 +52,7 @@ hooks.ts → repo.ts → data/local.ts (SQL) + data/remote.ts (HTTP)
 
 ### Prerequisite (assumed present)
 
-The shared data-layer infra: `@repo/offline-kit` (`getOfflineDb`, `insertRow`, `OutboxAdapter`, `CreateRecordLogPayload`), `api/client.ts` (`api`), `hooks/useApiQuery.ts` + `useApiMutation.ts`, `lib/` (`useLocalQuery`, `queryShape`, `invalidateLocalDataAfterWrite`), `utils/uuid`. This skill *uses* these — it does not build them.
+The shared data-layer infra: `@8848digital/offline-kit` (`getOfflineDb`, `insertRow`, `OutboxAdapter`, `CreateRecordLogPayload`), `api/client.ts` (`api`), `hooks/useApiQuery.ts` + `useApiMutation.ts`, `lib/` (`useLocalQuery`, `queryShape`, `invalidateLocalDataAfterWrite`), `utils/uuid`. This skill *uses* these — it does not build them.
 
 ### Types
 
@@ -117,4 +117,4 @@ When scaffolding a slice or adding an endpoint, provide:
 
 ## Knowledge Reference
 
-Frappe REST API, buildEndpoint, message.data envelope, snake_case, React Query, useApiQuery, useApiMutation, getOfflineDb, outbox, usecases, repo pattern, data/remote, data/local, vertical slice, packages/core/features, offline writes, ESLint boundary, @repo/offline-kit, encodeURIComponent, feature-local types
+Frappe REST API, buildEndpoint, message.data envelope, snake_case, React Query, useApiQuery, useApiMutation, getOfflineDb, outbox, usecases, repo pattern, data/remote, data/local, vertical slice, packages/core/features, offline writes, ESLint boundary, @8848digital/offline-kit, encodeURIComponent, feature-local types

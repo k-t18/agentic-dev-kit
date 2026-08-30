@@ -1,7 +1,7 @@
 # Token catalog — packages/ui-web
 
 The **only** source for colors, spacing, typography, radius, and shadows is
-`@repo/core/tokens`. Tailwind classes in `ui-web` map to these tokens (via
+`@app/core/tokens`. Tailwind classes in `ui-web` map to these tokens (via
 `apps/web/tailwind.config.ts`, which *consumes* the tokens — it never defines
 values). Reference a token by name; never a raw hex or pixel value.
 
@@ -43,7 +43,7 @@ Semantic classes read better; scale classes are more explicit. Pick one per proj
 ## Full class reference
 
 ```tsx
-// Semantic color classes (map to @repo/core/tokens)
+// Semantic color classes (map to @app/core/tokens)
 'bg-primary'            // colors.brand.primary (DEFAULT)
 'text-text-primary'     // colors.text.primary
 'text-text-secondary'   // colors.text.secondary
@@ -73,6 +73,6 @@ style={{ backgroundColor: '#3B82F6' }}
 ```
 
 **No matching token?** Do not hardcode and do not approximate silently. Stop, report
-the gap, and propose adding the token to `@repo/core/tokens` (colors are generated
+the gap, and propose adding the token to `@app/core/tokens` (colors are generated
 from Figma — the design likely defines a variable that isn't in the token file yet).
 See `figma-to-tokens.md`.

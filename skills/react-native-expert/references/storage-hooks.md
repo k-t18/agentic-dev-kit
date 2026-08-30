@@ -2,13 +2,13 @@
 
 > **Where storage lives:**
 > - **Durable / synced app data** (anything the app treats as the source of truth, offline
->   writes) → `@repo/core` / `@repo/offline-kit` (`OfflineDb`). **Not** a component storage hook.
+>   writes) → `@app/core` / `@8848digital/offline-kit` (`OfflineDb`). **Not** a component storage hook.
 > - **View-local prefs only** (theme toggle, last-used filter) → a native storage hook below.
 >   Because these use native modules (MMKV/AsyncStorage), the hook lives in `packages/ui-native`,
->   **never in `@repo/core`** (core is platform-agnostic — same rule as `useLocalStorage` in
+>   **never in `@app/core`** (core is platform-agnostic — same rule as `useLocalStorage` in
 >   `react-renderer`).
-> - **Global store slices** → `zustand-slice` (`@repo/core/state`); **session/auth tokens** →
->   `@repo/core` auth (SecureStore is wired there, not ad-hoc in a screen).
+> - **Global store slices** → `zustand-slice` (`@app/core/state`); **session/auth tokens** →
+>   `@app/core` auth (SecureStore is wired there, not ad-hoc in a screen).
 
 ## AsyncStorage
 
@@ -135,13 +135,13 @@ function Settings() {
 
 ## Zustand with MMKV → defer to `zustand-slice`
 
-A persisted global store is a **`zustand-slice`** concern in `@repo/core/state`, not a bespoke
+A persisted global store is a **`zustand-slice`** concern in `@app/core/state`, not a bespoke
 store defined in a screen. The MMKV persist adapter below is the *mechanism* `zustand-slice`
 wires for the native target — follow that skill for the canonical store pattern (selectors,
-persist, `@repo/core/state`); don't hand-roll a store here.
+persist, `@app/core/state`); don't hand-roll a store here.
 
 ```typescript
-// Mechanism only — the store itself is owned by zustand-slice (@repo/core/state)
+// Mechanism only — the store itself is owned by zustand-slice (@app/core/state)
 import { createJSONStorage } from 'zustand/middleware';
 import { MMKV } from 'react-native-mmkv';
 

@@ -1,6 +1,6 @@
 ---
 name: rn-component
-description: Use when creating or editing a native UI component in packages/ui-native (bare React Native CLI + StyleSheet). Build with RN primitives (every string inside <Text>), style with StyleSheet.create using rnTokens from @repo/core/tokens/rn-styles, express variants as keyed StyleSheet styles (no cva), and mirror the web twin's props verbatim as explicit unions (minus web-only props like className). Loading uses ActivityIndicator; a11y uses accessibilityRole/Label/State. Invoke for building a ui-native button, input, card, list, or any packages/ui-native component.
+description: Use when creating or editing a native UI component in packages/ui-native (bare React Native CLI + StyleSheet). Build with RN primitives (every string inside <Text>), style with StyleSheet.create using rnTokens from @app/core/tokens/rn-styles, express variants as keyed StyleSheet styles (no cva), and mirror the web twin's props verbatim as explicit unions (minus web-only props like className). Loading uses ActivityIndicator; a11y uses accessibilityRole/Label/State. Invoke for building a ui-native button, input, card, list, or any packages/ui-native component.
 license: MIT
 metadata:
   author: https://github.com/k-t18
@@ -19,13 +19,13 @@ Builds a single native UI component in `packages/ui-native` (bare React Native C
 
 ## Role Definition
 
-Expert React Native (bare RN CLI, not Expo) component engineer building single, token-driven components in `packages/ui-native` with `StyleSheet` and `rnTokens` from `@repo/core/tokens/rn-styles`. Each component **mirrors its web twin** in `packages/ui-web` verbatim — same variant names/sizes re-expressed as explicit unions — so the two platforms stay parallel; builds with RN primitives (every string inside `<Text>`), keyed `StyleSheet` variants (no `cva`), and `accessibility*` props. Read root `CLAUDE.md` first; this skill never overrides it. Tokens come from `design-system-setup` — this skill _consumes_ `rn-styles.ts`; for converting an existing web component to native, use `web-to-native` (it references this skill's conventions).
+Expert React Native (bare RN CLI, not Expo) component engineer building single, token-driven components in `packages/ui-native` with `StyleSheet` and `rnTokens` from `@app/core/tokens/rn-styles`. Each component **mirrors its web twin** in `packages/ui-web` verbatim — same variant names/sizes re-expressed as explicit unions — so the two platforms stay parallel; builds with RN primitives (every string inside `<Text>`), keyed `StyleSheet` variants (no `cva`), and `accessibility*` props. Read root `CLAUDE.md` first; this skill never overrides it. Tokens come from `design-system-setup` — this skill _consumes_ `rn-styles.ts`; for converting an existing web component to native, use `web-to-native` (it references this skill's conventions).
 
 ## When to Use This Skill
 
 - Building or editing a component in `packages/ui-native`.
 
-**Not for:** web components (`web-component`), migrating a web component to native (`web-to-native`), or hooks/API/stores/types (`@repo/core`).
+**Not for:** web components (`web-component`), migrating a web component to native (`web-to-native`), or hooks/API/stores/types (`@app/core`).
 
 ## Core Workflow
 
@@ -35,13 +35,13 @@ Expert React Native (bare RN CLI, not Expo) component engineer building single, 
 4. **States:** `ActivityIndicator` for loading; `disabled` via style + `disabled` prop; error/empty per component type. → `references/rn-primitives.md`
 5. **Accessibility:** `accessibilityRole`, `accessibilityLabel` (icon-only), `accessibilityState={{ busy, disabled }}`. → `references/rn-accessibility.md`
 6. **Structure:** `Readonly<Props>` + `Name.displayName` + named export; folder `<Name>/<Name>.tsx` + `index.ts`; add `export * from './components/<Name>';` to `packages/ui-native/src/index.ts`. (Complex props → a `Name.types.ts`.)
-7. **Validate:** `pnpm --filter @repo/ui-native exec tsc --noEmit` is clean; grep for raw hex/px, `%` widths, and CSS shorthand — there must be none.
+7. **Validate:** `pnpm --filter @app/ui-native exec tsc --noEmit` is clean; grep for raw hex/px, `%` widths, and CSS shorthand — there must be none.
 
 ## Technical Guidelines
 
 ### Dependencies
 
-`react-native` (primitives + `StyleSheet`) and `rnTokens` from `@repo/core/tokens/rn-styles`. **No `cva`, no `cn`, no `className`.** Icons are passed in as `ReactNode` slots (`leftIcon`/`rightIcon`) — this skill prescribes no icon library.
+`react-native` (primitives + `StyleSheet`) and `rnTokens` from `@app/core/tokens/rn-styles`. **No `cva`, no `cn`, no `className`.** Icons are passed in as `ReactNode` slots (`leftIcon`/`rightIcon`) — this skill prescribes no icon library.
 
 ### Reference Guide
 
@@ -57,7 +57,7 @@ Expert React Native (bare RN CLI, not Expo) component engineer building single, 
 // packages/ui-native/src/components/Button/Button.tsx
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { ReactNode } from 'react';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
+import { rnTokens } from '@app/core/tokens/rn-styles';
 
 // Mirrors the web twin's props (minus web-only className/type); variants as explicit unions.
 export interface ButtonProps {
@@ -145,7 +145,7 @@ export * from './components/Button';
 
 - Use `className`, `cn`, `cva`, or Tailwind.
 - Use raw hex/px, `%` widths (use `Dimensions`/Flexbox), or CSS shorthand (expand it).
-- Import `react-native` into `@repo/core`, or modify `@repo/core`.
+- Import `react-native` into `@app/core`, or modify `@app/core`.
 
 ## Output Templates
 
@@ -158,4 +158,4 @@ When building a `ui-native` component, provide:
 
 ## Knowledge Reference
 
-Bare React Native CLI, StyleSheet, rnTokens, @repo/core/tokens/rn-styles, RN primitives, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, keyed StyleSheet variants, explicit unions, accessibilityRole, accessibilityLabel, accessibilityState, packages/ui-native, web twin parity, Readonly props, displayName
+Bare React Native CLI, StyleSheet, rnTokens, @app/core/tokens/rn-styles, RN primitives, View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, keyed StyleSheet variants, explicit unions, accessibilityRole, accessibilityLabel, accessibilityState, packages/ui-native, web twin parity, Readonly props, displayName

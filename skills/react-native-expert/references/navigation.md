@@ -2,7 +2,7 @@
 
 Bare RN CLI uses **React Navigation** (not Expo Router — there is no file-based `app/`
 directory). Navigators are declared in code and typed with param lists. Screens render
-`@repo/ui-native` components and read data via `@repo/core` hooks (`feature-slice`).
+`@app/ui-native` components and read data via `@app/core` hooks (`feature-slice`).
 
 ## Typed param lists
 
@@ -66,7 +66,7 @@ export function RootNavigator() {
 // navigation/TabNavigator.tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons'; // bare CLI icon lib (not @expo/vector-icons)
-import { rnTokens } from '@repo/core/tokens/rn-styles';
+import { rnTokens } from '@app/core/tokens/rn-styles';
 import type { TabParamList } from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -123,12 +123,12 @@ function DetailsScreen() {
 
 ## Protected routes
 
-Choose the navigator at the top based on the session from `@repo/core` — the equivalent of
+Choose the navigator at the top based on the session from `@app/core` — the equivalent of
 Expo Router's group redirects.
 
 ```typescript
 // navigation/RootNavigator.tsx
-import { useSession } from '@repo/core'; // auth/session hook (feature-slice)
+import { useSession } from '@app/core'; // auth/session hook (feature-slice)
 
 export function RootNavigator() {
   const { user, isLoading } = useSession();

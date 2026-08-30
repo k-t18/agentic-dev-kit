@@ -9,11 +9,11 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2, Search } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
-// ── KEEP UNCHANGED (the whole point — @repo/core is shared) ──
-import { useGetUser } from '@repo/core/hooks';
-import { useAuthStore } from '@repo/core/store';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
-import type { User } from '@repo/core/types';
+// ── KEEP UNCHANGED (the whole point — @app/core is shared) ──
+import { useGetUser } from '@app/core/hooks';
+import { useAuthStore } from '@app/core/store';
+import { rnTokens } from '@app/core/tokens/rn-styles';
+import type { User } from '@app/core/types';
 
 // ── ADD (native) ───────────────────────────────────
 import { View, Text, TouchableOpacity, TextInput, Image, ScrollView, FlatList, ActivityIndicator, StyleSheet } from 'react-native';

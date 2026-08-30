@@ -1,6 +1,6 @@
 # Persist & Storage (cross-platform)
 
-Persisting a store is the one place platform storage is involved — and `@repo/core` **§3
+Persisting a store is the one place platform storage is involved — and `@app/core` **§3
 forbids** importing `localStorage`, `window`, or `react-native-mmkv`. So the store persists
 through an **injected** storage adapter: core defines the seam, each app supplies the real
 backend at startup.
@@ -42,7 +42,7 @@ persist(creator, {
 
 ```ts
 // apps/web — run once at startup (e.g. a "use client" providers component)
-import { configureStateStorage } from '@repo/core/state';
+import { configureStateStorage } from '@app/core/state';
 
 configureStateStorage({
   getItem: (name) => (typeof window === 'undefined' ? null : window.localStorage.getItem(name)),
@@ -56,7 +56,7 @@ configureStateStorage({
 ```ts
 // apps/native/index.js (or App bootstrap) — run once at startup
 import { MMKV } from 'react-native-mmkv';
-import { configureStateStorage } from '@repo/core/state';
+import { configureStateStorage } from '@app/core/state';
 
 const mmkv = new MMKV();
 
@@ -79,7 +79,7 @@ during SSR causes a hydration mismatch. Use `skipHydration: true` and rehydrate 
 // apps/web — a "use client" component mounted once near the root
 'use client';
 import { useEffect } from 'react';
-import { useCartStore } from '@repo/core/state';
+import { useCartStore } from '@app/core/state';
 
 export function StoreHydration() {
   useEffect(() => {
@@ -95,7 +95,7 @@ it for native-only stores).
 ## What NOT to persist
 
 - **Server data / React Query cache** — it has its own persistence story (`feature-slice`).
-- **Secrets / auth tokens** — those belong in `@repo/core` auth / secure storage, not a general
+- **Secrets / auth tokens** — those belong in `@app/core` auth / secure storage, not a general
   persisted store keyed in localStorage/MMKV.
 - **Ephemeral UI flags** you don't want to survive a reload (`isModalOpen`) — leave the store
   non-persisted, or use `partialize` to persist only the durable fields:

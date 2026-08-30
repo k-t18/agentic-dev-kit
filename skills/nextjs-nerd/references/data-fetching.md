@@ -1,6 +1,6 @@
 # Data Fetching & Caching
 
-> **In this monorepo, server-side data is the Frappe `apiClient` from `@repo/core`** — not raw
+> **In this monorepo, server-side data is the Frappe `apiClient` from `@app/core`** — not raw
 > `fetch` to arbitrary URLs and never a local DB. The `apiClient` is fetch-based and forwards
 > Next's `cache` / `next: { revalidate, tags }` options, so every caching strategy below
 > applies — pass the options through the `apiClient` call. **Client-side** data is React Query
@@ -11,7 +11,7 @@
 
 ```tsx
 // app/products/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 async function getProducts() {
   // apiClient forwards the same cache/next options Next extends fetch with
@@ -30,7 +30,7 @@ export default async function Page() {
 ## Cache Options
 
 ```tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 const endpoint = buildEndpoint('data.get')
 
 // 1. Force cache (Static Site Generation)
@@ -51,7 +51,7 @@ apiClient.get(endpoint, { next: { tags: ['posts'] } })
 ### Time-based Revalidation (ISR)
 
 ```tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 // Revalidate every 60 seconds
 async function getPosts() {
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function createPost(formData: FormData) {
   await apiClient.post(buildEndpoint('post.create'), { title: formData.get('title') })
@@ -108,7 +108,7 @@ export async function createPost(formData: FormData) {
 ### Tag-based Revalidation
 
 ```tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 // Tag apiClient reads so they can be revalidated together
 async function getPosts() {
@@ -157,7 +157,7 @@ export default async function Page() {
 ## Parallel Data Fetching
 
 ```tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export default async function Page() {
   // Fetch in parallel with Promise.all — no client-side waterfall
@@ -180,7 +180,7 @@ export default async function Page() {
 ## Sequential Data Fetching
 
 ```tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 // When one fetch depends on another (Next 15: params is async)
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -204,8 +204,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 ```tsx
 // app/page.tsx
 import { Suspense } from 'react'
-import { apiClient, buildEndpoint } from '@repo/core'
-import { PostList, Spinner } from '@repo/ui-web'
+import { apiClient, buildEndpoint } from '@app/core'
+import { PostList, Spinner } from '@app/ui-web'
 
 async function Posts() {
   const { message } = await apiClient.get(buildEndpoint('post.list'), { cache: 'no-store' })
@@ -229,7 +229,7 @@ export default function Page() {
 ```tsx
 // lib/data.ts
 import { cache } from 'react'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export const getUser = cache(async (id: string) => {
   const { message } = await apiClient.get(buildEndpoint('user.get', { id }))
@@ -262,13 +262,13 @@ export default function Page() {
 ## Backend data — Frappe apiClient (no local DB)
 
 There is **no Prisma/Postgres** in the web app. Server components read from the Frappe REST
-backend through the `@repo/core` `apiClient` (Frappe-shaped: `buildEndpoint`, `message.data`
+backend through the `@app/core` `apiClient` (Frappe-shaped: `buildEndpoint`, `message.data`
 envelope, snake_case), then render `ui-web` components.
 
 ```tsx
 // app/posts/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
-import { PostList } from '@repo/ui-web'
+import { apiClient, buildEndpoint } from '@app/core'
+import { PostList } from '@app/ui-web'
 
 export const revalidate = 60 // Revalidate every 60 seconds
 
@@ -281,7 +281,7 @@ export default async function PostsPage() {
 ## Error Handling
 
 ```tsx
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export default async function Page() {
   // apiClient throws on a non-OK Frappe response → activates the closest error.tsx
@@ -294,7 +294,7 @@ export default async function Page() {
 
 import { useEffect } from 'react'
 import * as Sentry from '@sentry/nextjs'
-import { ErrorState } from '@repo/ui-web'
+import { ErrorState } from '@app/ui-web'
 
 export default function Error({
   error,
@@ -315,14 +315,14 @@ export default function Error({
 
 ```tsx
 // app/posts/loading.tsx
-import { Spinner } from '@repo/ui-web'
+import { Spinner } from '@app/ui-web'
 export default function Loading() {
   return <Spinner />
 }
 
 // app/posts/page.tsx
-import { apiClient, buildEndpoint } from '@repo/core'
-import { PostList } from '@repo/ui-web'
+import { apiClient, buildEndpoint } from '@app/core'
+import { PostList } from '@app/ui-web'
 
 export default async function PostsPage() {
   const { message } = await apiClient.get(buildEndpoint('post.list'))
@@ -333,13 +333,13 @@ export default async function PostsPage() {
 ## Client-Side Data Fetching — React Query, not SWR
 
 Client components never fetch with `useState`+`useEffect` or ad-hoc SWR. They use the
-`@repo/core` React Query hooks owned by `feature-slice` (`useApiQuery` wrapping the Frappe
-`apiClient`). The hook lives in `@repo/core` so the native twin shares it verbatim.
+`@app/core` React Query hooks owned by `feature-slice` (`useApiQuery` wrapping the Frappe
+`apiClient`). The hook lives in `@app/core` so the native twin shares it verbatim.
 
 ```tsx
 'use client'
 
-import { usePosts } from '@repo/core/features/posts' // React Query hook (feature-slice)
+import { usePosts } from '@app/core/features/posts' // React Query hook (feature-slice)
 
 export function Posts() {
   const { data, isError, isLoading } = usePosts()
@@ -356,7 +356,7 @@ export function Posts() {
 ```tsx
 // lib/data.ts
 import { cache } from 'react'
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export const preload = (id: string) => {
   void getUser(id) // Trigger fetch without awaiting
@@ -395,7 +395,7 @@ type Post = {
   content: string
 }
 
-import { apiClient, buildEndpoint } from '@repo/core'
+import { apiClient, buildEndpoint } from '@app/core'
 
 export async function generateStaticParams() {
   const { message } = await apiClient.get(buildEndpoint('post.list'))

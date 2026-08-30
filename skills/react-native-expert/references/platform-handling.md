@@ -8,7 +8,7 @@ the token — **don't hand-write `Platform.select` for shadows or hardcode font 
 
 ```typescript
 import { StyleSheet } from 'react-native';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
+import { rnTokens } from '@app/core/tokens/rn-styles';
 
 const styles = StyleSheet.create({
   card: {
@@ -129,7 +129,7 @@ function FormScreen() {
 
 ```typescript
 import { StatusBar, Platform } from 'react-native';
-import { rnTokens } from '@repo/core/tokens/rn-styles';
+import { rnTokens } from '@app/core/tokens/rn-styles';
 
 function Screen() {
   return (

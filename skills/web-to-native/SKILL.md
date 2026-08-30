@@ -1,6 +1,6 @@
 ---
 name: web-to-native
-description: Use when migrating a QA-approved web component from packages/ui-web to its React Native twin in packages/ui-native. Only JSX structure and styling change — the props interface (mirrored verbatim as explicit unions), and every @repo/core import (hooks, API, stores, types, tokens) carry over unchanged; @repo/core is never modified. Maps HTML elements to RN primitives, cva variants to keyed StyleSheet, Tailwind classes to rnTokens, and web events/ARIA to onPress/accessibility*. Invoke to port a component to native, migrate ui-web to ui-native, or create a native twin.
+description: Use when migrating a QA-approved web component from packages/ui-web to its React Native twin in packages/ui-native. Only JSX structure and styling change — the props interface (mirrored verbatim as explicit unions), and every @app/core import (hooks, API, stores, types, tokens) carry over unchanged; @app/core is never modified. Maps HTML elements to RN primitives, cva variants to keyed StyleSheet, Tailwind classes to rnTokens, and web events/ARIA to onPress/accessibility*. Invoke to port a component to native, migrate ui-web to ui-native, or create a native twin.
 license: MIT
 metadata:
   author: https://github.com/k-t18
@@ -25,7 +25,7 @@ and a11y depth, see that skill's references (`rn-style-map.md`, `rn-primitives.m
 
 ## The one rule
 
-> **`@repo/core` does not change. Ever.** Hooks, API, stores, types, tokens — zero
+> **`@app/core` does not change. Ever.** Hooks, API, stores, types, tokens — zero
 > edits. Only JSX elements and styling are replaced.
 
 ## When to Use
@@ -33,7 +33,7 @@ and a11y depth, see that skill's references (`rn-style-map.md`, `rn-primitives.m
 - Migrating an approved `packages/ui-web` component to `packages/ui-native`.
 
 **Not for:** authoring a native component from scratch (`rn-component`), building a web
-component (`web-component`), or anything in `@repo/core`.
+component (`web-component`), or anything in `@app/core`.
 
 ## Pre-migration checklist
 
@@ -57,7 +57,7 @@ Fix the web component first if any fail:
    `rnTokens`; class → property mapping per `rn-component/references/rn-style-map.md`.
    → `references/variants-and-props.md`
 5. **Swap imports** — remove `cn`/`cva`/`lucide-react`/`react-router-dom`; keep every
-   `@repo/core/*`; add `react-native` primitives. → `references/imports-and-events.md`
+   `@app/core/*`; add `react-native` primitives. → `references/imports-and-events.md`
 6. **Events / nav / a11y** — `onClick`→`onPress`, `onChange`→`onChangeText`, React
    Router→React Navigation, ARIA→`accessibility*`. → `references/imports-and-events.md`
    (a11y detail: `rn-component/references/rn-accessibility.md`)
@@ -65,7 +65,7 @@ Fix the web component first if any fail:
    (`leftIcon`/`rightIcon`) carry over unchanged (no icon library added).
 8. **Output** — `packages/ui-native/src/components/<Name>/<Name>.tsx` + `index.ts`; add
    `export * from './components/<Name>';` to `packages/ui-native/src/index.ts`.
-9. **Validate** — `pnpm --filter @repo/ui-native exec tsc --noEmit` clean; run the
+9. **Validate** — `pnpm --filter @app/ui-native exec tsc --noEmit` clean; run the
    migration checklist.
 
 ## Reference Guide
@@ -83,8 +83,8 @@ Fix the web component first if any fail:
 `<Text>` · `Image` has explicit `width`+`height` · `FlatList` for dynamic lists.
 **Styling** — `StyleSheet.create` only · `rnTokens` for every value · no `className` · no
 `%` widths · no CSS shorthand (expanded) · shadows via `...rnTokens.shadow.*` spread.
-**Imports & logic** — every `@repo/core/*` import unchanged · `cn`/`cva`/`lucide-react`
+**Imports & logic** — every `@app/core/*` import unchanged · `cn`/`cva`/`lucide-react`
 removed · navigation → React Navigation · `onClick`→`onPress`, `onChange`→`onChangeText`.
 **Props** — mirror the web twin verbatim as explicit unions, minus `className`/`type`.
 **Output** — correct path under `packages/ui-native/` · exported from the package barrel ·
-`@repo/core` untouched.
+`@app/core` untouched.

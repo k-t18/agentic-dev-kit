@@ -33,8 +33,7 @@ Return through `queryShape` if the project preserves a legacy return shape.
 
 ```ts
 import { useQueryClient } from '@tanstack/react-query';
-import { useApiQuery } from '../../hooks/useApiQuery';
-import { useApiMutation } from '../../hooks/useApiMutation';
+import { useApiQuery, useApiMutation } from '@8848digital/catalyst';
 import type { Order, CreateOrderPayload } from './order.types';
 import { orderRepo } from './repo';
 

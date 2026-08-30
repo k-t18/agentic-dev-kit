@@ -22,7 +22,7 @@ returns `{ message: { data: … } }`; the `api` client unwraps the envelope, so 
 typed to the **inner** data shape.
 
 ```ts
-import { api } from '../../../api/client';
+import { api } from '@8848digital/catalyst';
 import { endpoints } from '../../../api/endpoints';
 import type { Order, CreateOrderPayload } from '../order.types';
 

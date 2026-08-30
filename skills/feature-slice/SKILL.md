@@ -52,7 +52,8 @@ hooks.ts → repo.ts → data/local.ts (SQL) + data/remote.ts (HTTP)
 
 ### Prerequisite (assumed present)
 
-The shared data-layer infra: `@8848digital/offline-kit` (`getOfflineDb`, `insertRow`, `OutboxAdapter`, `CreateRecordLogPayload`), `api/client.ts` (`api`), `hooks/useApiQuery.ts` + `useApiMutation.ts`, `lib/` (`useLocalQuery`, `queryShape`, `invalidateLocalDataAfterWrite`), `utils/uuid`. This skill *uses* these — it does not build them.
+The shared data-layer infra, all of it **installed** rather than in-repo:
+`@8848digital/offline-kit` (`getOfflineDb`, `insertRow`, `OutboxAdapter`, `CreateRecordLogPayload`) and `@8848digital/catalyst` (`api`, `buildEndpoint`, `useApiQuery`, `useApiMutation`, `useLocalQuery`, `queryShape`, `invalidateLocalDataAfterWrite`, `generateUuid`). Import them by package name — never by a relative path, since none of them live in `@app/core`. The one exception is `api/endpoints.ts`, which **is** product-owned and stays a relative import. This skill *uses* these — it does not build them.
 
 ### Types
 
@@ -103,7 +104,7 @@ Create the slice folder first if it doesn't exist. `GET` → `useApiQuery`; `POS
 ### MUST NOT DO
 
 - Put SQL/HTTP in a hook or repo, or import `getOfflineDb` there.
-- Touch `api/client.ts` (infrastructure), or add `axios`.
+- Reimplement or wrap the `api` client from `@8848digital/catalyst`, or add `axios`.
 - Use `any` (unknown → `string`), default exports, or API code in `apps/*`.
 
 ## Output Templates

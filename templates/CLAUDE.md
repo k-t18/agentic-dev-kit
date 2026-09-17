@@ -167,6 +167,8 @@ its task comes up; this list is orientation:
 | `feature-slice`       | Scaffolding a `packages/core/src/features/<feature>` slice **or** adding an API endpoint (hooks→repo→data + outbox) |
 | `zustand-slice`       | Adding a Zustand store slice                                                                                        |
 | `native-setup`        | Metro / native build resolution issues                                                                              |
+| `create-issue`        | Filing a bug, feature request, or task as a GitHub issue — repro steps, acceptance criteria, duplicate check        |
+| `create-pr`           | Opening or rewriting a PR — base `develop`, conventional title, Summary / What Changed / Test Plan body             |
 
 **Agents & commands:** `design-qa` is a **read-only QA agent** (`.claude/agents/`, run
 via `/agentic-dev-kit:design-qa <Name>` or `/agentic-dev-kit:design-qa all`) that verifies a built `ui-web` component

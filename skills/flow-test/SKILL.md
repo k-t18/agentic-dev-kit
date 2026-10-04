@@ -37,7 +37,7 @@ Senior QA engineer for a web-first, then React Native, frontend on a Frappe back
 4. **Plan, then show the plan** — which criteria run, which are skipped and why, and the steps for each. Wait for confirmation → `references/test-plan.md`.
 5. **Run each criterion** — reach the Given, perform the When, observe the Then; stop and ask before anything hard to undo → `references/executing-criteria.md`.
 6. **Collect evidence** — page, console, network, for every criterion → `references/evidence.md`.
-7. **Report** — one row per criterion, evidence for failures, counts, questions for the spec, and what a human still has to test → `references/reporting.md`.
+7. **Report** — one row per criterion, evidence for failures, counts, questions for the spec, and what a human still has to test → "The report" below and the template under Output Templates.
 8. **Save the tests** — one test per criterion in the project's existing end-to-end runner; ask first if there is none → `references/saved-tests.md`.
 
 ## Technical Guidelines
@@ -73,6 +73,26 @@ While running a criterion the app will do things the spec does not describe — 
 
 The opposite case is a failure: the spec states a behaviour and the app does something else.
 
+### The report
+
+Printed in the terminal at the end of the run, in the format under Output Templates. It is not written to a file.
+
+- **One row per criterion in scope** — run, skipped, or not testable. None left out, none twice.
+- **Results are only** `Pass`, `Fail`, `Could not test`, `Skipped`. The counts must add up to the number in scope.
+- **Verdict:** `FAIL` if any criterion failed; `PASS` when every criterion in scope passed; `INCOMPLETE` when none failed but some were not tested. A pass on a subset is a pass on that subset — the scope is stated.
+- **"Still to test by a person"** is built from section 12 of the spec, every `Skipped` and `Could not test` row, other browsers and small screens and real devices, and anything in sections 9 and 10 that no criterion in scope names. Native is always listed there; for a `web-only` project the line reads "No native target — nothing to test".
+- **"Questions for the spec"** holds behaviour the spec does not describe and criteria that could not be turned into steps. The run does not edit the spec.
+- Nothing in the report is a suggested fix.
+
+### Posting to a pull request
+
+Only when the developer asks — never automatically, and never because a PR happens to exist.
+
+1. Confirm which PR: the number, or the PR for the current branch.
+2. Show the exact text that will be posted and wait for a yes.
+3. Check it again against "What must not go into evidence" in `references/evidence.md`. Leave out screenshots that show personal data, and URLs the developer does not want public.
+4. Post it as one comment with `gh pr comment`. On a rerun, post a new comment; do not edit or delete an earlier one unless asked.
+
 ### Reference Guide
 
 | Topic | Reference | Load when |
@@ -81,7 +101,6 @@ The opposite case is a failure: the spec states a behaviour and the app does som
 | Choosing and skipping criteria | `references/test-plan.md` | Before touching the app |
 | Given / When / Then in the browser, and when to stop and ask | `references/executing-criteria.md` | Running criteria |
 | Page, console, and network evidence | `references/evidence.md` | Running criteria and writing failures |
-| The report and the PR comment | `references/reporting.md` | After the run |
 | Rerunnable test files | `references/saved-tests.md` | After the report |
 
 ## Constraints
@@ -119,9 +138,65 @@ The opposite case is a failure: the spec states a behaviour and the app does som
 When testing a flow, provide:
 
 1. The test plan, before running: criteria to run, criteria skipped with the reason, and the setup it assumes.
-2. The report in the terminal, following `references/reporting.md`: one row per criterion, evidence for every failure, counts, incidental console and network findings, questions for the spec, and what a human still has to test.
+2. The report in the terminal, in the format below: one row per criterion, evidence for every failure, counts, incidental console and network findings, questions for the spec, and what a human still has to test.
 3. The saved test files — one test per criterion, named with its `AC-` ID — or the statement that none were written and why.
 4. A list of what the run left behind: records created on the test backend, and any files added.
+
+```
+## Flow Test Report — <flow-name>
+Spec: docs/specs/<flow-name>/spec.md (<Approved | Draft>, last updated <date>)
+App: <url> · Backend: <real test backend | mocked> · Signed in as: <role>
+Scope: <all criteria | AC-03, AC-04 | W-03> · Browser: developer's Chrome, <width>x<height>
+<Mocked APIs: results prove frontend behaviour only.>
+
+### Verdict: PASS | FAIL | INCOMPLETE
+
+| ID    | Criterion                     | Covers     | Result         | Note                          |
+| ----- | ----------------------------- | ---------- | -------------- | ----------------------------- |
+| AC-01 | Given <…>, when <…>, then <…> | F-01       | Pass           |                               |
+| AC-02 | …                             | F-02, R-01 | Pass           | console error — see below     |
+| AC-04 | …                             | F-03, E-01 | Fail           | wrong message shown           |
+| AC-06 | …                             | F-05       | Could not test | blocked by AC-04              |
+| AC-08 | …                             | API-03     | Skipped        | API-03 is pending, not mocked |
+| AC-10 | …                             | F-07       | Skipped        | native — manual               |
+
+### Summary
+In scope: 6 · Pass: 2 · Fail: 1 · Could not test: 1 · Skipped: 2
+
+### Failures
+<one block per Fail, in the format in references/evidence.md>
+
+### Could not test
+  AC-06  Reached F-04; the step before it failed (AC-04), so the Given was never reached.
+
+### Seen along the way
+  Console         AC-02  <error text, first line> — after <action>
+  Network         AC-01  GET <path> sent twice for one page load
+  Before the run  <error already present on first load>
+<"Nothing." when there is nothing.>
+
+### Questions for the spec
+  S-03 / F-04  After <action> the app shows a confirmation dialog. The spec does not
+               describe one. Is it intended?
+  AC-09        Not testable as written — the Then names two separate results.
+<"None." when there are none. Raise these with the PM via /agentic-dev-kit:spec-builder.>
+
+### Still to test by a person
+  Native          Not tested — this run is web only. Section 12: F-03 (<what differs>).
+  Real devices    Not tested — one desktop browser at one window size.
+  Skipped         AC-08 (API-03 pending), AC-10 (native)
+  Could not test  AC-06
+  Not covered     <F- or R- IDs in the spec that no criterion in scope covers>
+  <Mocked run: everything that depends on the real backend.>
+
+### Left behind on the test backend
+  <record type> created by AC-03 (<identifier placeholder>)
+<"Nothing." when nothing was created, or when the run was against mocks.>
+
+### Saved tests
+  <path> — <N> tests (<AC- IDs>)
+<or: "Not written — <reason>". Filled in after references/saved-tests.md has run.>
+```
 
 ## Knowledge Reference
 

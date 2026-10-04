@@ -43,7 +43,8 @@ fixes them, and never edits application code.
    per `references/evidence.md`. Stop and ask before any action that is hard to undo or
    leaves the app.
 
-6. **Print the report** in the terminal per `references/reporting.md`.
+6. **Print the report** in the terminal, in the format under `flow-test` → Output
+   Templates.
 
 7. **Save the tests** per `references/saved-tests.md`. If the project has no end-to-end
    runner, tell the developer and ask which one they want before adding anything.

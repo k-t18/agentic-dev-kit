@@ -156,7 +156,7 @@ Answered questions stay in the table with the answer filled in.
 | --- | --- | --- | --- | --- |
 | W-01 | <short title> | <feature slice \| client state \| component \| screen wiring \| native port> | API-01, F-01 | — |
 
-Proposed only. Nothing here has been created as an issue.
+Proposed only, until `/spec-issues` records issue numbers in this table.
 
 ## 16. Change log
 
@@ -167,6 +167,11 @@ Proposed only. Nothing here has been created as an issue.
 
 ## Column notes
 
+- **Added by other commands** — the spec writer never adds or edits these, and keeps
+  them when updating a spec: an `Epic` header row and an `Issue` column in section 15
+  (`/spec-issues`); a `Build` column in section 15 (`/docs-sync`); open questions tagged
+  `[challenge]`, `[pr-check]`, `[security]` or `[drift]` in section 14, which are
+  answered like any other.
 - **Challenged** (header): `not yet` until a developer runs `/spec-challenger`, which
   fills in the date, who ran it, and the questions it added. The spec writer never sets
   this row itself.

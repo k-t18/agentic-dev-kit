@@ -160,7 +160,7 @@ its task comes up; this list is orientation:
 
 | Skill                 | Use when                                                                                                            |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `functional-spec`     | Writing or updating a flow's functional spec in `docs/specs/<flow-name>/spec.md` (via `/agentic-dev-kit:spec`)      |
+| `functional-spec`     | Writing or updating a flow's functional spec in `docs/specs/<flow-name>/spec.md` (via `/agentic-dev-kit:spec-builder`) |
 | `design-system-setup` | Extracting/updating design tokens from Figma; the `tokens.ts` + `rn-styles.ts` pipeline                             |
 | `web-component`       | Building a web component (`packages/ui-web`) — tokens, anatomy, Figma pull                                          |
 | `rn-component`        | Building a native component (`packages/ui-native`)                                                                  |

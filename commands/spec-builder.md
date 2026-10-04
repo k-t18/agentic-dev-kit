@@ -1,10 +1,10 @@
 ---
-name: spec
+name: spec-builder
 description: Write or update the functional spec for one flow (screens, steps, rules, APIs, offline behaviour, acceptance criteria) by interviewing the PM. Runs the functional-spec skill. Saves docs/specs/<flow-name>/spec.md.
 argument-hint: "[flow name] [optional figma-url] | [path to an existing spec.md]"
 ---
 
-# /spec
+# /spec-builder
 
 **Arguments:** $ARGUMENTS
 

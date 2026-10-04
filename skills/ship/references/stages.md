@@ -94,7 +94,8 @@ it**, naming the acceptance criteria it would check:
 | Developer says no | `not run — declined` |
 | No browser tools in the session | `not run — no browser tools in this session` |
 | No acceptance criterion covers this piece of work | `not run — nothing to check` |
-| No spec | `not run — no spec` |
+| No spec, but an issue | Offer `/agentic-dev-kit:flow-test #<issue>`, which takes its checks from the issue's stated expected behaviour (`T-nn`). Treat a failed `T-nn` like a failed `AC-nn`. |
+| No spec and no issue | `not run — no spec or issue` |
 | The piece is a `native port` | `not run — nothing to check` (the flow test drives the web app) |
 
 Otherwise run `/agentic-dev-kit:flow-test` for those criteria. It asks for the app URL

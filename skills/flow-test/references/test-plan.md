@@ -2,6 +2,9 @@
 
 The plan is made from the spec and shown to the developer **before** anything is clicked.
 
+No spec? Sections 1 and 2 are replaced by `without-a-spec.md` (the checks come from a
+GitHub issue or from the developer); sections 3 to 5 apply as written.
+
 ## 1. Read the spec
 
 | Section | Used for |

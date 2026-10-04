@@ -1,6 +1,6 @@
 ---
 name: flow-test
-description: Use when a flow built from a functional spec needs functional QA on the web app in a real browser. Reads the acceptance criteria in docs/specs/<flow-name>/spec.md, asks how the app is running and how sign-in works, shows a test plan, then drives the developer's own Chrome through the Claude in Chrome extension — reaching each Given, performing each When, observing each Then — and records Pass, Fail, or Could not test with evidence from the page, the console, and the network. Prints a report and saves one rerunnable end-to-end test per criterion in the project's existing runner. Never edits application code and never types credentials. Invoke for flow test, test this flow, functional QA, acceptance testing, run the acceptance criteria, end-to-end test, e2e, browser test.
+description: Use when a flow built from a functional spec needs functional QA on the web app in a real browser. Reads the acceptance criteria in docs/specs/<flow-name>/spec.md, asks how the app is running and how sign-in works, shows a test plan, then drives the developer's own Chrome through the Claude in Chrome extension — reaching each Given, performing each When, observing each Then — and records Pass, Fail, or Could not test with evidence from the page, the console, and the network. Prints a report and saves one rerunnable end-to-end test per criterion in the project's existing runner. Never edits application code and never types credentials. Also works without a spec: for a bug fix or small change it takes its checks from a GitHub issue's stated expected behaviour. Invoke for flow test, test this fix, test this issue, test this flow, functional QA, acceptance testing, run the acceptance criteria, end-to-end test, e2e, browser test.
 license: MIT
 metadata:
   author: https://github.com/k-t18
@@ -19,20 +19,21 @@ Checks a built flow against its spec's acceptance criteria in the developer's ow
 
 ## Role Definition
 
-Senior QA engineer for a web-first, then React Native, frontend on a Frappe backend. Specialises in turning written acceptance criteria into exact browser steps, and in reporting only what was observed: what the page showed, what the console logged, what the network returned. Tests the app as a user would, asks before anything that cannot be undone, and reports a failure rather than explaining it away or fixing it. Read root `CLAUDE.md` and the flow's spec first — the spec is the only definition of correct.
+Senior QA engineer for a web-first, then React Native, frontend on a Frappe backend. Specialises in turning written acceptance criteria into exact browser steps, and in reporting only what was observed: what the page showed, what the console logged, what the network returned. Tests the app as a user would, asks before anything that cannot be undone, and reports a failure rather than explaining it away or fixing it. Read root `CLAUDE.md` and the flow's spec first — the spec is the definition of correct; where there is no spec, the issue's stated expected behaviour is, and nothing beyond it.
 
 ## When to Use This Skill
 
 - A flow, or one work item of it, has been built on web and needs checking against its spec before a PR or a release.
 - A fix went in and the affected acceptance criteria need running again.
 - The project needs saved end-to-end tests for a flow's acceptance criteria.
+- A bug fix or small change raised as a GitHub issue, with no spec, needs checking against what the issue says should happen.
 
 **Not for:** visual comparison against Figma (`/agentic-dev-kit:design-qa`); reviewing code; testing the native app; fixing what it finds; writing or changing the spec (`/agentic-dev-kit:spec-builder`).
 
 ## Core Workflow
 
 1. **Check the browser tools** — the session must expose the Claude in Chrome tools (`mcp__claude-in-chrome__*`). If it does not, say so and stop.
-2. **Read the spec** — `docs/specs/<flow-name>/spec.md`: the header, sections 4–10 for how the flow behaves, section 13 for the criteria, section 14 for what is still undecided, section 15 when the subset is a `W-` ID.
+2. **Read the spec** — `docs/specs/<flow-name>/spec.md`: the header, sections 4–10 for how the flow behaves, section 13 for the criteria, section 14 for what is still undecided, section 15 when the subset is a `W-` ID. **No spec?** Take the checks from the GitHub issue or from the developer instead → `references/without-a-spec.md`; the remaining steps are the same.
 3. **Ask the setup questions** — the URL, what the app is pointed at, how sign-in works. Every run → `references/run-setup.md`.
 4. **Plan, then show the plan** — which criteria run, which are skipped and why, and the steps for each. Wait for confirmation → `references/test-plan.md`.
 5. **Run each criterion** — reach the Given, perform the When, observe the Then; stop and ask before anything hard to undo → `references/executing-criteria.md`.
@@ -102,6 +103,7 @@ Only when the developer asks — never automatically, and never because a PR hap
 | Given / When / Then in the browser, and when to stop and ask | `references/executing-criteria.md` | Running criteria |
 | Page, console, and network evidence | `references/evidence.md` | Running criteria and writing failures |
 | Rerunnable test files | `references/saved-tests.md` | After the report |
+| Checks from an issue, with no spec | `references/without-a-spec.md` | The argument is an issue or `--checks`, or no spec exists |
 
 ## Constraints
 
@@ -118,6 +120,7 @@ Only when the developer asks — never automatically, and never because a PR hap
 - Say in the report that mocked results prove frontend behaviour only, when the APIs were mocked.
 - Say in the report that native was not tested, and list what a human still has to test.
 - Name each saved test with its `AC-` ID, and follow the project's existing end-to-end conventions.
+- Without a spec: quote the source of every check, get the checks confirmed before running, and say in the report that only those checks were tested.
 
 ### MUST NOT DO
 
@@ -127,6 +130,7 @@ Only when the developer asks — never automatically, and never because a PR hap
 - Edit application code, the spec, tokens, or components — including adding test hooks or test ids to make a test easier.
 - Fix a failure, or suggest it is "probably fine".
 - Judge behaviour the spec does not describe as pass or fail.
+- Invent an expected result when there is no spec — not from the code, and not from how the app behaves now.
 - Install an end-to-end runner, or add a dependency or a script, without the developer choosing it first.
 - Write a credential, a token, a session cookie, or real personal data into a saved test or the report.
 - Post the report to GitHub unless the developer asks.

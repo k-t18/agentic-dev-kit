@@ -1,7 +1,7 @@
 ---
 name: flow-test
-description: Test one flow of the web app in the developer's own Chrome against the acceptance criteria in its functional spec. Runs the flow-test skill. Prints a pass/fail report per criterion and saves rerunnable end-to-end tests. Never edits application code.
-argument-hint: "[flow name | path to spec.md] [optional subset: AC-01 AC-04 | AC-01-AC-06 | W-03]"
+description: Test the web app in the developer's own Chrome against the acceptance criteria in a functional spec — or, when there is no spec, against the expected behaviour stated in a GitHub issue. Runs the flow-test skill. Prints a pass/fail report per criterion and saves rerunnable end-to-end tests. Never edits application code.
+argument-hint: "[flow name | path to spec.md] [optional subset: AC-01 AC-04 | AC-01-AC-06 | W-03]  |  [#issue | issue URL | --checks]"
 ---
 
 # /flow-test
@@ -26,9 +26,14 @@ fixes them, and never edits application code.
    - Anything after the flow name or path is the **subset**: one or more `AC-` IDs, an
      `AC-` range, or one `W-` ID (every criterion whose `Covers` overlaps that work
      item's `Covers`). No subset → every criterion in section 13.
-   - Empty → list the specs under `docs/specs/` with their status and ask which one.
-   - If the file does not exist, or it has no section 13 rows, say so and stop. Do not
-     test from a description — the criteria are the test.
+   - `#<n>`, `issue <n>`, or an issue URL → **no-spec mode**: the checks come from that
+     GitHub issue. `--checks` → no-spec mode with checks the developer states. Follow
+     `references/without-a-spec.md`, then continue from step 3.
+   - Empty → list the specs under `docs/specs/` with their status and ask which one —
+     or whether to test against an issue instead.
+   - If a spec file does not exist, or it has no section 13 rows, say so and offer
+     no-spec mode. Do not test from a guess — stated criteria or stated checks are the
+     test.
 
 3. **Ask the setup questions** per `flow-test` → `references/run-setup.md`: the URL the
    web app is running at, what it is pointed at (a real test backend or mocked APIs),
@@ -61,3 +66,5 @@ fixes them, and never edits application code.
   developer raises it with the PM through `/agentic-dev-kit:spec-builder`. It is never
   judged pass or fail.
 - Native is not tested. The report says so and lists what is left for a person.
+- Without a spec, a pass covers only the checks taken from the issue. The report says the
+  rest of the flow was not tested.

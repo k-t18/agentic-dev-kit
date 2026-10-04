@@ -44,22 +44,30 @@ Senior delivery engineer for a web-first, then React Native, frontend. Specialis
 
 ### What gets created
 
-| Item | Count | Label | Body |
+| Item | Count | Labels | Body |
 | --- | --- | --- | --- |
-| Epic | One per spec | `epic` | Link to the spec, section 1 Summary, section 3 Scope, the list of child issues |
-| Child issue | One per `W-` row | One, by kind | Kind, the skill that builds it, the covered IDs with their spec text, matching acceptance criteria, dependencies, link to the spec |
+| Epic | One per spec | The template's, plus `epic` | The spec's Purpose, Summary and Scope, the links, and a checklist of the child issues |
+| Child issue | One per `W-` row | The template's | Kind, the skill that builds it, the covered IDs with their spec text, dependencies, link to the spec, and the matching acceptance criteria as a checklist |
 
-Titles: `[<flow-name>] Epic: <flow name>` and `[<flow-name>] W-nn: <piece of work>`. The flow name and the `W-` ID in the title are what a later run searches for, so never drop them.
+### The project's issue standard
 
-### Kind → label and skill
+Every issue follows the project's **feature-request issue template** in `.github/ISSUE_TEMPLATE/`: its title prefix, its labels, its field lines (such as Priority and Area) and their allowed values, and its headings in order. The spec's content is fitted into that shape → `references/issue-templates.md`. With no template in the project, the default there is used: prefix `[FEATURE] `, label `enhancement`, fields Priority and Area, headings Problem / motivation, Proposed solution, Alternatives considered, Acceptance criteria.
 
-| Kind (section 15) | Label | Built with | Command |
+Titles: `<prefix><flow-name> Epic: <flow name>` and `<prefix><flow-name> W-nn: <piece of work>` — with the default, `[FEATURE] <flow-name> W-nn: <piece of work>`. The flow name and the `W-` ID in the title are what a later run searches for, so never drop them.
+
+Priority is not in the spec. The developer chooses it in the plan; it is never guessed.
+
+### Kind → area and skill
+
+| Kind (section 15) | Area | Built with | Command |
 | --- | --- | --- | --- |
-| `feature slice` | `feature-slice` | `feature-slice` | `/agentic-dev-kit:feature-slice` |
-| `client state` | `client-state` | `zustand-slice` | `/agentic-dev-kit:zustand-slice` |
-| `component` | `component` | `web-component` | — (skill) |
-| `screen wiring` | `screen-wiring` | none — built by hand in `apps/web` | — |
-| `native port` | `native-port` | `web-to-native` | — (skill) |
+| `feature slice` | web | `feature-slice` | `/agentic-dev-kit:feature-slice` |
+| `client state` | web | `zustand-slice` | `/agentic-dev-kit:zustand-slice` |
+| `component` | web | `web-component` | — (skill) |
+| `screen wiring` | web | none — built by hand in `apps/web` | — |
+| `native port` | native | `web-to-native` | — (skill) |
+
+The kind is written in the issue body, not as a label — the labels are the template's. If the template's Area field offers no value that fits, ask.
 
 A kind outside this table is not guessed at: report the row and stop. It is fixed in the spec through `/agentic-dev-kit:spec-builder`.
 
@@ -105,7 +113,7 @@ Rows marked `removed` in section 15 get no issue. If a removed row already has o
 | --- | --- | --- |
 | Status gate, parsing sections 13–15, expanding `Covers`, building the plan | `references/read-spec.md` | Before planning |
 | Epic and child issue bodies | `references/issue-templates.md` | Writing an issue body |
-| Preflight, labels, create, verify, sub-issues and the fallback | `references/github-commands.md` | Running any `gh` command |
+| Preflight, labels, create, verify, the epic checklist and sub-issues | `references/github-commands.md` | Running any `gh` command |
 | The exact edits to the spec | `references/write-back.md` | After each issue, and at the end |
 
 ## Constraints
@@ -115,12 +123,14 @@ Rows marked `removed` in section 15 get no issue. If a removed row already has o
 - Run every preflight check and stop on the first failure, naming it.
 - Refuse any spec whose status is not `Approved`, listing the blocking open questions and pointing at `/agentic-dev-kit:spec-builder`.
 - Verify every recorded issue number on GitHub before skipping its row.
-- Show the full plan — target repository, epic title, every child title, kind, label, dependencies, create or skip — and get one explicit confirmation before the first `gh` command that creates or changes anything.
+- Follow the project's feature-request issue template — title prefix, labels, fields, headings in order — and say in the plan which template was used.
+- Ask the developer for the priority; fill every other field from the spec or the template's allowed values.
+- Show the full plan — target repository, issue standard, epic title, every child title, kind, area, dependencies, create or skip — and get one explicit confirmation before the first `gh` command that creates or changes anything.
 - Create child issues in dependency order, and reference dependencies by their real issue numbers.
 - Copy step, rule, error, and acceptance-criterion text from the spec word for word.
 - Record each issue number in the spec as soon as the issue exists.
-- Read the output of every `gh` command; if a call fails or returns something unexpected, stop or take the documented fallback — never assume success.
-- Say in the summary which linking path was used: sub-issues or the task-list fallback.
+- Read the output of every `gh` command; if a call fails or returns something unexpected, stop — never assume success.
+- Say in the summary how children were linked: the epic checklist plus sub-issues, or the checklist only.
 
 ### MUST NOT DO
 
@@ -128,6 +138,8 @@ Rows marked `removed` in section 15 get no issue. If a removed row already has o
 - Create an issue for a row that already has one, or a second epic.
 - Add assignees, milestones, or project boards unless the developer asked.
 - Change or delete a label that already exists in the repository.
+- Add, drop, rename, or reorder a heading or field of the project's issue template, or use a field value the template does not list.
+- Choose a priority on the developer's behalf.
 - Close, delete, retitle, or rewrite the body of an existing issue. The only edit to an existing issue is the child list in the epic body.
 - Edit the spec beyond `references/write-back.md`: never renumber an ID, never change `Status`, never touch sections 1–14 or the wording of a `W-` row.
 - Paraphrase, shorten, or "improve" a rule or criterion when copying it into an issue.
@@ -144,14 +156,18 @@ When creating issues from a spec, provide:
    ```
    Spec:   docs/specs/<flow-name>/spec.md — Approved
    Repo:   <owner>/<repo> (<visibility>)
-   Epic:   [<flow-name>] Epic: <flow name>                      create   label: epic
+   Standard: .github/ISSUE_TEMPLATE/<file> (feature request)  |  kit default — the project has no template
+   Labels:  enhancement (+ epic on the epic)      Priority: <not chosen yet>
+   Epic:   [FEATURE] <flow-name> Epic: <flow name>                      area: web   create
    Issues (creation order):
-     W-01  [<flow-name>] W-01: <piece of work>   feature slice   label: feature-slice   depends on: —            create
-     W-03  [<flow-name>] W-03: <piece of work>   component       label: component       depends on: —            skip (#14 exists, open)
-     W-04  [<flow-name>] W-04: <piece of work>   screen wiring   label: screen-wiring   depends on: W-01, W-03   create   open question: Q-05
-   Labels to create: epic, screen-wiring
-   Linking: sub-issues, or a task list in the epic if that fails
-   Not set: assignees, milestones, projects
+     W-01  [FEATURE] <flow-name> W-01: <piece of work>   feature slice   area: web   depends on: —            create
+     W-03  [FEATURE] <flow-name> W-03: <piece of work>   component       area: web   depends on: —            skip (#14 exists, open)
+     W-04  [FEATURE] <flow-name> W-04: <piece of work>   screen wiring   area: web   depends on: W-01, W-03   create   open question: Q-05
+   Labels to create: epic
+   Linking: checklist in the epic, plus sub-issues if the repository supports them
+   Not set: milestones, projects, assignees beyond the template's
+
+   Which priority for these issues — High, Medium, or Low? (one for all, or name rows that differ)
 
    Create 1 epic and 2 issues in <owner>/<repo>? (yes / no)
    ```
@@ -162,7 +178,7 @@ When creating issues from a spec, provide:
    Epic:     #12 <url>
    Created:  W-01 → #13, W-04 → #15
    Skipped:  W-03 → #14 (already existed)
-   Linked:   sub-issues  |  task list in the epic body (sub-issue call failed: <reason>)
+   Linked:   checklist in the epic + sub-issues  |  checklist in the epic only (sub-issue call failed: <reason>)
    Open questions named in issues: Q-05 in #15
    Spec updated: Issue column, Epic row, change log, Last updated — not committed
    Next: commit and push the spec, then start with #13 (W-01) — /agentic-dev-kit:feature-slice

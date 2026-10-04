@@ -35,15 +35,18 @@ never creates anything before the developer has seen the full plan and said yes.
    depend on, the `Epic` header row and the `Issue` column if present. Verify every
    recorded issue still exists. Rows that already have an issue are skipped.
 
-5. **Show the plan and ask once.** Target repository, epic title, then one line per
-   child issue in creation order: title, kind, label, dependencies, and whether it will
-   be created or skipped. List the labels that will be created. Ask for **one**
-   confirmation. Without a clear yes, create nothing and write nothing.
+5. **Show the plan and ask once.** Target repository, the issue standard in use (the
+   project's feature-request template in `.github/ISSUE_TEMPLATE/`, or the kit default),
+   epic title, then one line per child issue in creation order: title, kind, area,
+   dependencies, and whether it will be created or skipped. List the labels that will be
+   created. Ask which **priority** to give the issues — the spec does not carry one —
+   then ask for **one** confirmation. Without a clear yes, create nothing and write
+   nothing.
 
-6. **Create** per `references/github-commands.md` and `references/issue-templates.md`:
-   missing labels → the epic (unless recorded) → child issues in dependency order →
-   link the children under the epic as sub-issues, falling back to a task list in the
-   epic body if the sub-issue call fails.
+6. **Create** per `references/github-commands.md` and `references/issue-templates.md`,
+   every issue in the template's shape: missing labels → the epic (unless recorded) →
+   child issues in dependency order → the checklist of children in the epic, plus
+   sub-issue links when the repository supports them.
 
 7. **Write back to the spec** per `references/write-back.md` — the `Issue` column in
    section 15, the `Epic` header row, one change-log line, `Last updated`. Nothing else.

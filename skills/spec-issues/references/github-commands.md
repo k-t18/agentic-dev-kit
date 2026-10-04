@@ -37,20 +37,22 @@ For each recorded number (the epic and every `Issue` cell):
 gh issue view <n> --json number,title,state,url
 ```
 
-- Returns the issue → it exists. Compare the title: it must contain `[<flow-name>]`
-  and, for a child, the row's `W-nn`. A different flow or ID is a mismatch — stop.
+- Returns the issue → it exists. Compare the title: it must contain `<flow-name> W-nn:`
+  for a child, or `<flow-name> Epic:` for the epic. A different flow or ID is a
+  mismatch — stop.
 - Errors (not found) → the recorded issue no longer exists.
 
 For each row with **no** recorded number, look for an issue left by an earlier,
 interrupted run:
 
 ```bash
-gh issue list --state all --search "\"[<flow-name>] W-nn:\" in:title" --json number,title,state,url
+gh issue list --state all --search "\"<flow-name> W-nn:\" in:title" --json number,title,state,url
 ```
 
-Search is fuzzy. Accept a result only when its title **starts with** the exact prefix
-`[<flow-name>] W-nn:` (or `[<flow-name>] Epic:` for the epic). More than one exact
-match: stop and ask which one is real.
+Search is fuzzy. Accept a result only when its title, after the template's prefix
+(`[FEATURE] ` by default), **starts with** exactly `<flow-name> W-nn:` (or
+`<flow-name> Epic:` for the epic). More than one exact match: stop and ask which one is
+real.
 
 ## Labels
 
@@ -58,17 +60,16 @@ match: stop and ask which one is real.
 gh label list --limit 200 --json name
 ```
 
-Create only the labels the plan needs and the list does not contain. Never pass
-`--force` — it would overwrite a label the team already uses.
+The labels needed are the issue template's (`enhancement` by default) and `epic`. Create
+only those the list does not contain. Never pass `--force` — it would overwrite a label
+the team already uses.
 
 ```bash
-gh label create "epic"          --color "5319E7" --description "Parent issue for one flow's spec"
-gh label create "feature-slice" --color "1D76DB" --description "Data path for one domain in packages/core"
-gh label create "client-state"  --color "0E8A16" --description "Client-side store"
-gh label create "component"     --color "FBCA04" --description "Reusable UI component"
-gh label create "screen-wiring" --color "D93F0B" --description "Route, layout, hooks, rules and errors for a screen"
-gh label create "native-port"   --color "006B75" --description "Port of approved web work to native"
+gh label create "epic"        --color "5319E7" --description "Parent issue for one flow's spec"
+gh label create "enhancement" --color "A2EEEF" --description "New feature or request"
 ```
+
+No label is created for the kind of work — the kind is written in the issue body.
 
 If a create fails because the label already exists, that is fine — continue.
 
@@ -78,9 +79,13 @@ Write the body to a temporary file (outside the repository, or delete it afterwa
 it must not end up committed), then:
 
 ```bash
-gh issue create --title "[<flow-name>] Epic: <flow name>" --label "epic" --body-file <body file>
-gh issue create --title "[<flow-name>] W-01: <piece of work>" --label "feature-slice" --body-file <body file>
+gh issue create --title "[FEATURE] <flow-name> Epic: <flow name>" --label "enhancement" --label "epic" --body-file <body file>
+gh issue create --title "[FEATURE] <flow-name> W-01: <piece of work>" --label "enhancement" --body-file <body file>
 ```
+
+The prefix and labels shown are the default standard; use the project's issue template's
+when it has one (`issue-templates.md`). Do not pass `--template` — the body file already
+follows the template, and the flag would open an editor.
 
 - On success `gh` prints the new issue's URL; the number is its last path segment.
   Confirm with `gh issue view <n> --json number,title,url` if the output is anything
@@ -95,7 +100,11 @@ Order: the epic first (children reference it), then children sorted by dependenc
 
 ## Link children under the epic
 
-### Preferred: sub-issues
+Two things are done. The checklist in the epic's Acceptance criteria is **always**
+written (below, "The checklist in the epic body"). Sub-issue links are added as well
+when the repository supports them.
+
+### Sub-issues, when supported
 
 GitHub has a sub-issues feature with a REST endpoint. It is not available on every
 plan, host, or `gh` version, and its request shape has changed over time — treat the
@@ -126,11 +135,12 @@ Your `gh` may also offer its own way to set a parent — check `gh issue create 
 and `gh issue edit --help`. If it does, it is an acceptable substitute for step 2; step
 3 still confirms it.
 
-### Fallback: a task list in the epic body
+### The checklist in the epic body
 
-**These commands are the fallback.** Use them when any sub-issue call returns an error
-(404, 403, 422, an unknown endpoint, a feature-not-enabled message), or step 3 does not
-list the child. Do not retry the sub-issue call with invented parameters.
+**Always run these.** When a sub-issue call returns an error (404, 403, 422, an unknown
+endpoint, a feature-not-enabled message), or step 3 does not list the child, the
+checklist is the only link — do not retry the sub-issue call with invented parameters,
+and say in the summary that sub-issues were not linked.
 
 ```bash
 gh issue view <epic number> --json body --jq .body > <body file>

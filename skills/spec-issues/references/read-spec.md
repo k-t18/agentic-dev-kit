@@ -123,6 +123,9 @@ Print the plan in the shape given in `SKILL.md` → Output Templates, including:
 
 - the target repository and its visibility, exactly as `gh` reports it;
 - rows that will be skipped, so the developer sees the whole breakdown;
+- the issue standard in use — the project's feature-request template file, or the kit
+  default when the project has none (`issue-templates.md`);
+- each row's area, and the question asking for the priority;
 - labels that will be created;
 - any warning: spec not committed or not on the default branch (links will not resolve
   until it is pushed), `Challenged` is `not yet`, an unknown ID in `Covers`.

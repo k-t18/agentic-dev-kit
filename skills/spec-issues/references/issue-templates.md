@@ -19,7 +19,7 @@ one whose `name` or `about` describes a feature, addition, or improvement).
 
 | From the template | Used as |
 | --- | --- |
-| `title:` in the frontmatter | The title prefix, exactly as written |
+| `title:` in the frontmatter | Not used — titles follow the fixed format in section 3 |
 | `labels:` | The labels on every issue created |
 | `assignees:` | Followed only if it names someone; empty stays empty |
 | Bold field lines above the first heading (`**Priority:**`, `**Area:**`, …) and their allowed values | Filled with one of the listed values, never a new one |
@@ -37,7 +37,6 @@ Bug-report templates are not used here. Work cut from a spec is new work, not a 
 
 Used when the project has no template of its own.
 
-- **Title prefix:** `[FEATURE] `
 - **Label:** `enhancement`
 - **Fields:** `**Priority:** High | Medium | Low` and
   `**Area:** native | web | android | tooling | docs`
@@ -48,7 +47,7 @@ Used when the project has no template of its own.
 
 | Template part | Child issue | Epic |
 | --- | --- | --- |
-| Title | `<prefix><flow-name> W-nn: <piece of work, as written in section 15>` | `<prefix><flow-name> Epic: <flow name from the spec's title line>` |
+| Title | `feat(<flow-name>:W-nn): <piece of work, as written in section 15>` | `feat(<flow-name>:epic): <flow name from the spec's title line>` |
 | Labels | The template's labels | The template's labels, plus `epic` |
 | Priority | Chosen by the developer in the plan — the spec carries none | Same |
 | Area | From the kind: `native port` → the native value; every other kind → the web value | The web value; add the native value if the flow has a `native port` row and the field allows more than one |
@@ -57,12 +56,16 @@ Used when the project has no template of its own.
 | Alternatives considered | Fixed sentence — the approved spec set the approach | Same |
 | Acceptance criteria | One checkbox per matching `AC-` row | One checkbox per child issue |
 
+Titles use this format in every project, whatever prefix the issue template's `title:`
+field suggests: `<flow-name>` is the spec's folder name, `W-nn` the work item's ID, and
+`epic` is written in lower case. Nothing is added before `feat(`.
+
 Priority is the one value the spec cannot supply. Ask once in the plan for a priority to
 apply to all issues, and let the developer change it per row. Never choose it.
 
 ## 4. Child issue
 
-**Title:** `[FEATURE] <flow-name> W-nn: <Piece of work>`
+**Title:** `feat(<flow-name>:W-nn): <Piece of work>`
 **Labels:** `enhancement`
 
 ````markdown
@@ -157,7 +160,7 @@ None — the approach is set by the approved spec. To change it, raise it in the
 
 ## 5. Epic
 
-**Title:** `[FEATURE] <flow-name> Epic: <flow name>`
+**Title:** `feat(<flow-name>:epic): <flow name>`
 **Labels:** `enhancement`, `epic`
 
 ````markdown

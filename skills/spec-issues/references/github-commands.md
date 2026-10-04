@@ -37,8 +37,8 @@ For each recorded number (the epic and every `Issue` cell):
 gh issue view <n> --json number,title,state,url
 ```
 
-- Returns the issue → it exists. Compare the title: it must contain `<flow-name> W-nn:`
-  for a child, or `<flow-name> Epic:` for the epic. A different flow or ID is a
+- Returns the issue → it exists. Compare the title: it must start with
+  `feat(<flow-name>:W-nn):` for a child, or `feat(<flow-name>:epic):` for the epic. A different flow or ID is a
   mismatch — stop.
 - Errors (not found) → the recorded issue no longer exists.
 
@@ -46,12 +46,11 @@ For each row with **no** recorded number, look for an issue left by an earlier,
 interrupted run:
 
 ```bash
-gh issue list --state all --search "\"<flow-name> W-nn:\" in:title" --json number,title,state,url
+gh issue list --state all --search "\"feat(<flow-name>:W-nn)\" in:title" --json number,title,state,url
 ```
 
-Search is fuzzy. Accept a result only when its title, after the template's prefix
-(`[FEATURE] ` by default), **starts with** exactly `<flow-name> W-nn:` (or
-`<flow-name> Epic:` for the epic). More than one exact match: stop and ask which one is
+Search is fuzzy. Accept a result only when its title **starts with** exactly
+`feat(<flow-name>:W-nn):` (or `feat(<flow-name>:epic):` for the epic). More than one exact match: stop and ask which one is
 real.
 
 ## Labels
@@ -79,12 +78,13 @@ Write the body to a temporary file (outside the repository, or delete it afterwa
 it must not end up committed), then:
 
 ```bash
-gh issue create --title "[FEATURE] <flow-name> Epic: <flow name>" --label "enhancement" --label "epic" --body-file <body file>
-gh issue create --title "[FEATURE] <flow-name> W-01: <piece of work>" --label "enhancement" --body-file <body file>
+gh issue create --title "feat(<flow-name>:epic): <flow name>" --label "enhancement" --label "epic" --body-file <body file>
+gh issue create --title "feat(<flow-name>:W-01): <piece of work>" --label "enhancement" --body-file <body file>
 ```
 
-The prefix and labels shown are the default standard; use the project's issue template's
-when it has one (`issue-templates.md`). Do not pass `--template` — the body file already
+The labels shown are the default standard; use the project's issue template's when it
+has one (`issue-templates.md`). The title format is fixed and does not come from the
+template. Do not pass `--template` — the body file already
 follows the template, and the flag would open an editor.
 
 - On success `gh` prints the new issue's URL; the number is its last path segment.

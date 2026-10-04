@@ -51,9 +51,9 @@ Senior delivery engineer for a web-first, then React Native, frontend. Specialis
 
 ### The project's issue standard
 
-Every issue follows the project's **feature-request issue template** in `.github/ISSUE_TEMPLATE/`: its title prefix, its labels, its field lines (such as Priority and Area) and their allowed values, and its headings in order. The spec's content is fitted into that shape → `references/issue-templates.md`. With no template in the project, the default there is used: prefix `[FEATURE] `, label `enhancement`, fields Priority and Area, headings Problem / motivation, Proposed solution, Alternatives considered, Acceptance criteria.
+Every issue follows the project's **feature-request issue template** in `.github/ISSUE_TEMPLATE/`: its labels, its field lines (such as Priority and Area) and their allowed values, and its headings in order. The spec's content is fitted into that shape → `references/issue-templates.md`. With no template in the project, the default there is used: label `enhancement`, fields Priority and Area, headings Problem / motivation, Proposed solution, Alternatives considered, Acceptance criteria.
 
-Titles: `<prefix><flow-name> Epic: <flow name>` and `<prefix><flow-name> W-nn: <piece of work>` — with the default, `[FEATURE] <flow-name> W-nn: <piece of work>`. The flow name and the `W-` ID in the title are what a later run searches for, so never drop them.
+Titles have one fixed format, whatever the template's own title prefix is: `feat(<flow-name>:epic): <flow name>` for the epic and `feat(<flow-name>:W-nn): <piece of work>` for a child issue. The flow name and the `W-` ID in the title are what a later run searches for, so never drop them.
 
 Priority is not in the spec. The developer chooses it in the plan; it is never guessed.
 
@@ -123,7 +123,7 @@ Rows marked `removed` in section 15 get no issue. If a removed row already has o
 - Run every preflight check and stop on the first failure, naming it.
 - Refuse any spec whose status is not `Approved`, listing the blocking open questions and pointing at `/agentic-dev-kit:spec-builder`.
 - Verify every recorded issue number on GitHub before skipping its row.
-- Follow the project's feature-request issue template — title prefix, labels, fields, headings in order — and say in the plan which template was used.
+- Follow the project's feature-request issue template — labels, fields, headings in order — with titles in the fixed `feat(<flow-name>:W-nn): …` format, and say in the plan which template was used.
 - Ask the developer for the priority; fill every other field from the spec or the template's allowed values.
 - Show the full plan — target repository, issue standard, epic title, every child title, kind, area, dependencies, create or skip — and get one explicit confirmation before the first `gh` command that creates or changes anything.
 - Create child issues in dependency order, and reference dependencies by their real issue numbers.
@@ -158,11 +158,11 @@ When creating issues from a spec, provide:
    Repo:   <owner>/<repo> (<visibility>)
    Standard: .github/ISSUE_TEMPLATE/<file> (feature request)  |  kit default — the project has no template
    Labels:  enhancement (+ epic on the epic)      Priority: <not chosen yet>
-   Epic:   [FEATURE] <flow-name> Epic: <flow name>                      area: web   create
+   Epic:   feat(<flow-name>:epic): <flow name>                          area: web   create
    Issues (creation order):
-     W-01  [FEATURE] <flow-name> W-01: <piece of work>   feature slice   area: web   depends on: —            create
-     W-03  [FEATURE] <flow-name> W-03: <piece of work>   component       area: web   depends on: —            skip (#14 exists, open)
-     W-04  [FEATURE] <flow-name> W-04: <piece of work>   screen wiring   area: web   depends on: W-01, W-03   create   open question: Q-05
+     W-01  feat(<flow-name>:W-01): <piece of work>       feature slice   area: web   depends on: —            create
+     W-03  feat(<flow-name>:W-03): <piece of work>       component       area: web   depends on: —            skip (#14 exists, open)
+     W-04  feat(<flow-name>:W-04): <piece of work>       screen wiring   area: web   depends on: W-01, W-03   create   open question: Q-05
    Labels to create: epic
    Linking: checklist in the epic, plus sub-issues if the repository supports them
    Not set: milestones, projects, assignees beyond the template's

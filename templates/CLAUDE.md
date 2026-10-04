@@ -172,10 +172,15 @@ its task comes up; this list is orientation:
 **Agents & commands:** `design-qa` is a **read-only QA agent** (`.claude/agents/`, run
 via `/agentic-dev-kit:design-qa <Name>` or `/agentic-dev-kit:design-qa all`) that verifies a built `ui-web` component
 against its Figma source — flags only, never edits. `web-component` hands off to it
-after a build.
+after a build. `spec-challenger` is a **read-only agent** (run via
+`/agentic-dev-kit:spec-challenger <flow-name>`) that challenges a functional spec from the
+developer's side — flags doubts only; the command adds them to the spec's open questions
+once the developer agrees.
 
 **Specs:** a flow's behaviour is written down in `docs/specs/<flow-name>/spec.md` before
-it is built. Build a flow from a spec whose status is `Approved`; if the spec is `Draft`,
+it is built. The order is: PM writes it (`/agentic-dev-kit:spec-builder`) → a developer
+challenges it (`/agentic-dev-kit:spec-challenger`) → PM answers and approves → work is
+cut from it. Build a flow from a spec whose status is `Approved`; if the spec is `Draft`,
 or the code needs a rule the spec does not state, raise it as an open question in the
 spec rather than deciding it in code.
 

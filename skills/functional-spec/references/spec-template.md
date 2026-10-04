@@ -13,6 +13,7 @@ example rows show the shape only and are deleted.
 | Owner | <PM name> |
 | Figma | <link to the section or page> |
 | Project mode | <web-only \| web+native> |
+| Challenged | not yet |
 | Last updated | <YYYY-MM-DD> |
 
 ## 1. Summary
@@ -166,6 +167,11 @@ Proposed only. Nothing here has been created as an issue.
 
 ## Column notes
 
+- **Challenged** (header): `not yet` until a developer runs `/spec-challenger`, which
+  fills in the date, who ran it, and the questions it added. The spec writer never sets
+  this row itself.
+- **`[challenge]` questions** (section 14): raised by the developer's challenge. They
+  are answered like any other open question.
 - **Type** (section 4): `page` or `modal`.
 - **Source of the fact** (section 6): where the app learns the condition. A rule whose
   source nobody can name is an open question.

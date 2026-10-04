@@ -31,6 +31,10 @@ spec from being `Approved`. Report each failure with the ID it concerns.
   `Approved`.
 - Anything else → `Draft`.
 
+**Before asking the PM to confirm:** if the header's `Challenged` row says `not yet`,
+say so — a developer has not looked at this spec. The PM may still approve; it is their
+call, and the warning is not a failed check.
+
 ## Report
 
 ```

@@ -80,6 +80,8 @@ IDs are two-digit, per type, assigned in order. Once a spec has been saved, an I
 
 Only the PM's explicit confirmation moves a spec to `Approved`. Any later edit that changes behaviour sets it back to `Draft` until confirmed again.
 
+A spec is meant to be challenged by a developer (`/spec-challenger`) before it is approved. The header's `Challenged` row records that; questions the challenge adds are tagged `[challenge]` in section 14 and are answered like any other. If the row still says `not yet` when the PM is about to confirm, tell them — approval is still their call.
+
 ### What the project mode changes
 
 | Mode | Effect on the spec |

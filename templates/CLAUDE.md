@@ -161,6 +161,10 @@ its task comes up; this list is orientation:
 | Skill                 | Use when                                                                                                            |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `functional-spec`     | Writing or updating a flow's functional spec in `docs/specs/<flow-name>/spec.md` (via `/agentic-dev-kit:spec-builder`) |
+| `spec-issues`         | Turning an `Approved` spec's work breakdown into a GitHub epic + child issues (via `/agentic-dev-kit:spec-issues`)  |
+| `flow-test`           | Checking a flow's acceptance criteria on the running web app in the browser (via `/agentic-dev-kit:flow-test`)      |
+| `docs-sync`           | Bringing the spec's build status, feature doc, changelog, README/CLAUDE.md in line (via `/agentic-dev-kit:docs-sync`) |
+| `ship`                | Running the checks in order and opening the PR with one combined report (via `/agentic-dev-kit:ship`)               |
 | `design-system-setup` | Extracting/updating design tokens from Figma; the `tokens.ts` + `rn-styles.ts` pipeline                             |
 | `web-component`       | Building a web component (`packages/ui-web`) — tokens, anatomy, Figma pull                                          |
 | `rn-component`        | Building a native component (`packages/ui-native`)                                                                  |
@@ -175,7 +179,20 @@ against its Figma source — flags only, never edits. `web-component` hands off 
 after a build. `spec-challenger` is a **read-only agent** (run via
 `/agentic-dev-kit:spec-challenger <flow-name>`) that challenges a functional spec from the
 developer's side — flags doubts only; the command adds them to the spec's open questions
-once the developer agrees.
+once the developer agrees. `pr-checker` (`/agentic-dev-kit:pr-check`) reviews a branch's
+changes against the spec and the rules in this file, and `security-checker`
+(`/agentic-dev-kit:security-check`) reviews them for frontend security problems — both are
+**read-only agents** that flag first; their commands fix only what the developer agrees to.
+
+**From spec to PR:** `spec-builder` → `spec-challenger` → (PM approves) → `spec-issues` →
+build (`feature-slice`, `web-component`, …) → `ship`, which runs lint and type-check,
+`design-qa`, `pr-check`, `security-check`, `flow-test` and `docs-sync`, stops on a
+blocker, and opens the PR. Merging stays a human decision.
+
+**Without a spec** (a bug fix or small change raised straight as an issue): `pr-check`,
+`security-check`, `docs-sync` and `ship` run on the branch's changes and skip only their
+spec-based checks; `flow-test #<issue>` tests against the issue's stated expected
+behaviour. Only `spec-issues` needs a spec.
 
 **Specs:** a flow's behaviour is written down in `docs/specs/<flow-name>/spec.md` before
 it is built. The order is: PM writes it (`/agentic-dev-kit:spec-builder`) → a developer

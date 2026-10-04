@@ -160,6 +160,7 @@ its task comes up; this list is orientation:
 
 | Skill                 | Use when                                                                                                            |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `functional-spec`     | Writing or updating a flow's functional spec in `docs/specs/<flow-name>/spec.md` (via `/agentic-dev-kit:spec`)      |
 | `design-system-setup` | Extracting/updating design tokens from Figma; the `tokens.ts` + `rn-styles.ts` pipeline                             |
 | `web-component`       | Building a web component (`packages/ui-web`) — tokens, anatomy, Figma pull                                          |
 | `rn-component`        | Building a native component (`packages/ui-native`)                                                                  |
@@ -172,6 +173,11 @@ its task comes up; this list is orientation:
 via `/agentic-dev-kit:design-qa <Name>` or `/agentic-dev-kit:design-qa all`) that verifies a built `ui-web` component
 against its Figma source — flags only, never edits. `web-component` hands off to it
 after a build.
+
+**Specs:** a flow's behaviour is written down in `docs/specs/<flow-name>/spec.md` before
+it is built. Build a flow from a spec whose status is `Approved`; if the spec is `Draft`,
+or the code needs a rule the spec does not state, raise it as an open question in the
+spec rather than deciding it in code.
 
 ---
 

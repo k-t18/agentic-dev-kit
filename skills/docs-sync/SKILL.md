@@ -1,6 +1,7 @@
 ---
 name: docs-sync
 description: Use when work on a flow has been built, merged, or is about to merge and the project's documents must be brought in line with the code — marking which spec work items are built, recording where the code differs from the spec as open questions for the PM, writing or updating the flow's feature doc, adding the changelog entry, and correcting README or CLAUDE.md facts when structure, scripts, environment variables or conventions changed. Plans every edit first and writes only what the developer agrees to; never edits application code and never rewrites the PM's rules. Invoke for docs sync, update the docs, build status, spec drift, feature doc, changelog entry, update README, update CLAUDE.md.
+user-invocable: false
 license: MIT
 metadata:
   author: https://github.com/k-t18

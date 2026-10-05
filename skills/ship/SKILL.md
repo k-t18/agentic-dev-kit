@@ -1,6 +1,7 @@
 ---
 name: ship
 description: Use when a piece of work on a branch is finished and needs to go up for review — runs the project's lint, type-check, and tests, then design QA, PR check, security check, flow test, and docs sync in order, stops at the first failure or blocker, and otherwise opens the pull request with one combined report after a single confirmation. Never merges. Invoke for ship, ship it, open the PR, raise a pull request, ready for review, run all checks, pre-PR checks.
+user-invocable: false
 license: MIT
 metadata:
   author: https://github.com/k-t18

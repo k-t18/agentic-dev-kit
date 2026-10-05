@@ -1,6 +1,7 @@
 ---
 name: spec-issues
 description: Use when an Approved functional spec's work breakdown must become GitHub issues — one epic plus one child issue per W- row, created with the gh CLI in dependency order, linked as sub-issues, and recorded back in the spec. Refuses Draft specs, shows the full plan and asks once before creating anything, and never creates a duplicate on re-run. Invoke for create issues from spec, spec to issues, cut issues, epic from spec, work breakdown to GitHub, sub-issues, gh issue create.
+user-invocable: false
 license: MIT
 metadata:
   author: https://github.com/k-t18

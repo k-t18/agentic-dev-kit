@@ -1,6 +1,7 @@
 ---
 name: zustand-slice
 description: Use when adding or editing a global client-state store slice in packages/core/src/state (Zustand). Scaffolds a flat-file store (state + actions + selectors colocated) with immutable updates, narrow selector hooks, and cross-platform persist via injected storage (core stays platform-agnostic — the app wires localStorage on web / MMKV on native). Two modes: scaffold a new store, or append a field/action to an existing one. Not for server state (feature-slice), local/Context state (react-renderer), or offline domain data (offline-kit). Invoke for zustand store, global state, store slice, persist, selectors, @app/core/state.
+user-invocable: false
 license: MIT
 metadata:
   author: https://github.com/k-t18

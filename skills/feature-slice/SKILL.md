@@ -1,6 +1,6 @@
 ---
 name: feature-slice
-description: Use when creating a new packages/core/features/<feature> vertical slice, or adding an API endpoint to an existing one, following the core layering invariant. Generates the correct downward layers — hooks → repo → data/local(SQL) + data/remote(HTTP), with offline writes via usecases + outbox — keeping getOfflineDb out of hooks/repo so the ESLint boundary holds. Frappe-shaped API (buildEndpoint, message.data envelope, snake_case). Two modes: scaffold a whole slice, or add one endpoint (type + endpoint + remote + repo + hook) from a pasted curl/JSON/field-list. Invoke for feature slice, add endpoint, curl to api, api hook, repo/outbox scaffolding.
+description: Use when creating a new packages/core/features/<feature> vertical slice, or adding an API endpoint to an existing one, following the core layering invariant. Generates the correct downward layers — hooks → repo → data/local(SQL) + data/remote(HTTP), with offline writes via usecases + outbox — keeping getOfflineDb out of hooks/repo so the ESLint boundary holds. Frappe-shaped API (buildEndpoint, message.data envelope, snake_case). Two modes — scaffold a whole slice, or add one endpoint (type + endpoint + remote + repo + hook) from a pasted curl/JSON/field-list. Invoke for feature slice, add endpoint, curl to api, api hook, repo/outbox scaffolding.
 user-invocable: false
 license: MIT
 metadata:
